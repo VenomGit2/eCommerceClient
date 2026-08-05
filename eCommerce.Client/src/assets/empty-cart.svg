@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" role="img" aria-labelledby="title">
+  <title id="title">An empty shopping cart</title>
+  <g fill="none" stroke="#1d4ed8" stroke-linecap="round" stroke-linejoin="round" stroke-width="7">
+    <path d="M30 35h22l19 81h99l20-59H60"/><circle cx="88" cy="143" r="9"/><circle cx="163" cy="143" r="9"/>
+  </g>
+</svg>
+
