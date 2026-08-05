@@ -12,7 +12,7 @@ import { PRODUCT_CATEGORIES, formatCategoryLabel } from '../../utils/productCate
 
 export default function ProductListPage() {
   const { products, loading, error, reload } = useProducts();
-  const { addItem } = useCart();
+  const { addItem, items: cartItems } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
   const selectedCategory = searchParams.get('category') || '';
@@ -96,7 +96,7 @@ export default function ProductListPage() {
       : resultsError
         ? <ErrorMessage message={resultsError.message} onRetry={() => categorySearch.category ? categorySearch.loadCategory(categorySearch.category) : productSearch.search(searchTerm)} />
         : displayedProducts.length
-          ? <div className="product-grid">{displayedProducts.map((product, index) => <ProductCard key={product.id ?? index} product={product} onAdd={addItem} />)}</div>
+          ? <div className="product-grid">{displayedProducts.map((product, index) => <ProductCard key={product.id ?? index} product={product} onAdd={addItem} isInCart={cartItems.some((item) => String(item.id) === String(product.id))} />)}</div>
           : <EmptyState title="No products found" message={categorySearch.category ? `There are no products in ${formatCategoryLabel(categorySearch.category)}.` : 'Check the product ID and try again.'} />}
   </section>;
 }

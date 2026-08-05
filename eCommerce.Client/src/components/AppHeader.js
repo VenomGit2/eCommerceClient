@@ -21,7 +21,7 @@ export default function AppHeader() {
       <nav className="nav page-container" aria-label="Main navigation">
         <button className="nav__toggle" type="button" aria-label="Toggle navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}><span /><span /><span /></button>
         <div className={`nav__links nav__links--primary ${menuOpen ? 'nav__links--open' : ''}`}>
-          <NavLink to={ROUTES.products} onClick={closeMenu}>NEW IN</NavLink>
+          <NavLink to={ROUTES.newIn} onClick={closeMenu}>NEW IN</NavLink>
           <NavLink to={ROUTES.products} onClick={closeMenu}>SHOP</NavLink>
           {isAuthenticated && <NavLink to={ROUTES.orders} onClick={closeMenu}>ORDERS</NavLink>}
           {isSuperadmin && <NavLink to={ROUTES.admin} onClick={closeMenu}>ADMIN</NavLink>}

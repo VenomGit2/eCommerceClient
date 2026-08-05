@@ -8,7 +8,7 @@ import { ROUTES } from '../../routes/routePaths';
 
 export default function HomePage() {
   const { products, loading, error, reload } = useProducts();
-  const { addItem } = useCart();
+  const { addItem, items: cartItems } = useCart();
   const heroProduct = products[0];
 
   return (
@@ -40,7 +40,7 @@ export default function HomePage() {
           ? <Loader label="Loading new launches" />
           : error
             ? <ErrorMessage message={error.message} onRetry={reload} />
-            : <div className="product-grid comet-product-grid">{products.slice(0, 8).map((product) => <ProductCard key={product.id} product={product} onAdd={addItem} />)}</div>}
+            : <div className="product-grid comet-product-grid">{products.slice(0, 8).map((product) => <ProductCard key={product.id} product={product} onAdd={addItem} isInCart={cartItems.some((item) => String(item.id) === String(product.id))} />)}</div>}
       </section>
     </div>
   );

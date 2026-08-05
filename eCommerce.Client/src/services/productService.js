@@ -7,13 +7,25 @@ const productRequest = (path, options = {}) => apiRequest(path, {
   baseURL: endpointPath('REACT_APP_PRODUCTS_API_BASE_URL'),
 });
 
+const resolveProductImageUrl = (product) => {
+  if (!product.imageUrl) return getProductImageUrl(product.productName, product.productId);
+  try {
+    return new URL(
+      product.imageUrl,
+      endpointPath('REACT_APP_PRODUCTS_API_BASE_URL'),
+    ).toString();
+  } catch {
+    return getProductImageUrl(product.productName, product.productId);
+  }
+};
+
 export const mapProduct = (product) => ({
   ...product,
   id: product.productId,
   name: product.productName,
   price: product.unitPrice,
-  currency: 'USD',
-  imageUrl: product.imageUrl || getProductImageUrl(product.productName, product.productId),
+  currency: 'INR',
+  imageUrl: resolveProductImageUrl(product),
 });
 
 export async function getProducts(signal) {

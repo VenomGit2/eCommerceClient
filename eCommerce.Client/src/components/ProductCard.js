@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { formatCurrency } from '../utils/currency';
 import Button from './common/Button';
 
-export default function ProductCard({ product, onAdd }) {
+export default function ProductCard({ product, onAdd, isInCart = false }) {
   const [added, setAdded] = useState(false);
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState('');
@@ -45,9 +45,11 @@ export default function ProductCard({ product, onAdd }) {
           <strong>{formatCurrency(price, currency)}</strong>
           {rating && <span aria-label={`Rated ${rating} out of 5`}><span aria-hidden="true">★</span> {rating}</span>}
         </div>
-        <Button className={`product-card__action ${added ? 'is-added' : ''}`} onClick={addToCart} disabled={id == null || adding || added} aria-live="polite">
-          {adding ? 'Adding…' : added ? 'Added to cart ✓' : 'Add to cart'}
-        </Button>
+        {isInCart
+          ? <Link className="button button--primary product-card__action is-in-cart" to="/cart">Go to cart <span aria-hidden="true">→</span></Link>
+          : <Button className={`product-card__action ${added ? 'is-added' : ''}`} onClick={addToCart} disabled={id == null || adding || added} aria-live="polite">
+            {adding ? 'Adding…' : added ? 'Added to cart ✓' : 'Add to cart'}
+          </Button>}
         {error && <p className="field-error" role="alert">{error}</p>}
       </div>
     </article>

@@ -1,24 +1,10 @@
 import { useCallback, useMemo, useReducer } from 'react';
 import CartContext from '../context/CartContext';
 import cartReducer, { cartInitialState } from '../globalStates/cartReducer';
-import useAuth from '../hooks/useAuth';
-import { createCart, updateCart } from '../services/cartService';
 
 export default function CartContainer({ children }) {
   const [state, dispatch] = useReducer(cartReducer, cartInitialState);
-  const { session } = useAuth();
-  const addItem = useCallback(async (item) => {
-    const existingItem = state.items.find((cartItem) => cartItem.id === item.id);
-    const items = existingItem
-      ? state.items.map((cartItem) => cartItem.id === item.id
-        ? { ...cartItem, quantity: cartItem.quantity + 1 }
-        : cartItem)
-      : [...state.items, { ...item, quantity: 1 }];
-
-    const saveCart = state.items.length === 0 ? createCart : updateCart;
-    await saveCart({ items }, session?.token);
-    dispatch({ type: 'REPLACE', payload: items });
-  }, [state.items, session?.token]);
+  const addItem = useCallback((item) => dispatch({ type: 'ADD', payload: item }), []);
   const setQuantity = useCallback((id, quantity) => dispatch({ type: 'QUANTITY', payload: { id, quantity } }), []);
   const removeItem = useCallback((id) => dispatch({ type: 'REMOVE', payload: id }), []);
   const clearCart = useCallback(() => dispatch({ type: 'CLEAR' }), []);
