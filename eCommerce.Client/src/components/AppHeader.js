@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import useCart from '../hooks/useCart';
 import { ROUTES } from '../routes/routePaths';
+import ModuleAccess from '../utils/moduleAccess';
 
 function SearchIcon() { return <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>; }
 function UserIcon() { return <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4.5 21a7.5 7.5 0 0 1 15 0" /></svg>; }
@@ -10,8 +11,9 @@ function CartIcon() { return <svg aria-hidden="true" viewBox="0 0 24 24"><path d
 
 export default function AppHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { isAuthenticated, isSuperadmin, logout } = useAuth();
+  const { isAuthenticated, session, logout } = useAuth();
   const { itemCount } = useCart();
+  const hasAdminAccess = ModuleAccess('PRODUCT', null, session?.access_token);
   const closeMenu = () => setMenuOpen(false);
 
   return <>
@@ -24,7 +26,7 @@ export default function AppHeader() {
           <NavLink to={ROUTES.newIn} onClick={closeMenu}>NEW IN</NavLink>
           <NavLink to={ROUTES.products} onClick={closeMenu}>SHOP</NavLink>
           {isAuthenticated && <NavLink to={ROUTES.orders} onClick={closeMenu}>ORDERS</NavLink>}
-          {isSuperadmin && <NavLink to={ROUTES.admin} onClick={closeMenu}>ADMIN</NavLink>}
+          {hasAdminAccess && <NavLink to={ROUTES.admin} onClick={closeMenu}>ADMIN</NavLink>}
           {isAuthenticated && <button type="button" className="nav__signout" onClick={() => { logout(); closeMenu(); }}>SIGN OUT</button>}
         </div>
         <Link className="brand" to={ROUTES.home} onClick={closeMenu} aria-label="Commerce home">COMMERCE</Link>

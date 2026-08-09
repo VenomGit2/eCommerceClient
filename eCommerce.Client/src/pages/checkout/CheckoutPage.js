@@ -4,10 +4,12 @@ import Button from '../../components/common/Button';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import useAuth from '../../hooks/useAuth';
 import useCart from '../../hooks/useCart';
+import useAxios from '../../hooks/useAxios';
 import { ROUTES } from '../../routes/routePaths';
 import { createOrder } from '../../services/orderService';
 
 export default function CheckoutPage() {
+  const API = useAxios();
   const { items, clearCart } = useCart();
   const { session } = useAuth();
   const navigate = useNavigate();
@@ -22,7 +24,11 @@ export default function CheckoutPage() {
     setError('');
 
     const user = session?.data?.data ?? session?.data?.user ?? session?.data ?? session?.user ?? session;
-    const userID = user?.userID ?? user?.userId ?? user?.id;
+    const userID = user?.preferred_username
+      ?? user?.username
+      ?? user?.userName
+      ?? user?.name
+      ?? user?.email;
     const payload = {
       userID,
       orderDate: new Date().toISOString(),
@@ -34,11 +40,11 @@ export default function CheckoutPage() {
     };
 
     try {
-      if (!userID) throw new Error('The signed-in user ID is missing. Please sign out and sign in again.');
+      if (!userID) throw new Error('The signed-in username is missing. Please sign out and sign in again.');
       if (payload.orderItems.some((item) => !item.productID)) {
         throw new Error('A cart item is missing its product ID.');
       }
-      const response = await createOrder(payload, session?.token);
+      const response = await createOrder(API, payload);
       if (response?.success === false || response?.error) {
         throw new Error(response.error || 'Failed to add your order.');
       }

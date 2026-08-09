@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard';
 import EmptyState from '../../components/common/EmptyState';
 import ErrorMessage from '../../components/common/ErrorMessage';
-import Loader from '../../components/common/Loader';
 import useCart from '../../hooks/useCart';
 import useProducts from '../../hooks/useProducts';
 import { ROUTES } from '../../routes/routePaths';
@@ -80,7 +79,7 @@ export default function NewInPage() {
         </div>
 
         {loading
-          ? <Loader label="Loading new arrivals" />
+          ? null
           : error
             ? <ErrorMessage message={error.message} onRetry={reload} />
             : displayedProducts.length

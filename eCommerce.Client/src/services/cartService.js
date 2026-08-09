@@ -1,21 +1,21 @@
-import { apiRequest, endpointPath } from './apiClient';
+import { endpointPath } from '../hooks/useAxios';
 
-const orderRequest = (path, options = {}) => apiRequest(path, {
-  ...options,
+const orderConfig = (config = {}) => ({
+  ...config,
   baseURL: endpointPath('REACT_APP_ORDERS_API_BASE_URL'),
 });
 
-export const getCart = (token, signal) => orderRequest(
-  endpointPath('REACT_APP_ORDERS_PATH'),
-  { token, signal },
-);
+export async function getCart(API, signal) {
+  const { data } = await API.get(endpointPath('REACT_APP_ORDERS_PATH'), orderConfig({ signal }));
+  return data;
+}
 
-export const createCart = (cart, token) => orderRequest(
-  endpointPath('REACT_APP_ORDER_CREATE_PATH'),
-  { method: 'POST', body: cart, token },
-);
+export async function createCart(API, cart) {
+  const { data } = await API.post(endpointPath('REACT_APP_ORDER_CREATE_PATH'), cart, orderConfig());
+  return data;
+}
 
-export const updateCart = (cart, token) => orderRequest(
-  endpointPath('REACT_APP_ORDER_UPDATE_PATH'),
-  { method: 'PUT', body: cart, token },
-);
+export async function updateCart(API, cart) {
+  const { data } = await API.put(endpointPath('REACT_APP_ORDER_UPDATE_PATH'), cart, orderConfig());
+  return data;
+}

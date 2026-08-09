@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getProductsByCategory } from '../services/productService';
+import useAxios from './useAxios';
 
 export default function useProductCategory() {
+  const API = useAxios();
   const controllerRef = useRef(null);
   const [state, setState] = useState({ products: [], loading: false, error: null, category: '' });
 
@@ -10,14 +12,14 @@ export default function useProductCategory() {
     controllerRef.current = new AbortController();
     setState({ products: [], loading: true, error: null, category });
     try {
-      const products = await getProductsByCategory(category, controllerRef.current.signal);
+      const products = await getProductsByCategory(API, category, controllerRef.current.signal);
       setState({ products, loading: false, error: null, category });
       return products;
     } catch (error) {
       if (error.name !== 'AbortError') setState({ products: [], loading: false, error, category });
       return [];
     }
-  }, []);
+  }, [API]);
 
   const clearCategory = useCallback(() => {
     controllerRef.current?.abort();

@@ -2,23 +2,24 @@ import { useCallback, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import ErrorMessage from '../../components/common/ErrorMessage';
-import Loader from '../../components/common/Loader';
 import useAsync from '../../hooks/useAsync';
 import useCart from '../../hooks/useCart';
+import useAxios from '../../hooks/useAxios';
 import { ROUTES } from '../../routes/routePaths';
 import { getProduct } from '../../services/productService';
 import { getEntity } from '../../utils/apiResponse';
 import { formatCurrency } from '../../utils/currency';
 
 export default function ProductDetailPage() {
+  const API = useAxios();
   const { productId } = useParams();
   const { addItem, items } = useCart();
   const [cartState, setCartState] = useState({ adding: false, error: '' });
-  const loadProduct = useCallback((signal) => getProduct(productId, signal), [productId]);
+  const loadProduct = useCallback((signal) => getProduct(API, productId, signal), [API, productId]);
   const { data, loading, error, reload } = useAsync(loadProduct, [loadProduct]);
   const product = getEntity(data);
 
-  if (loading) return <Loader label="Loading product" />;
+  if (loading) return null;
   if (error) return <ErrorMessage message={error.message} onRetry={reload} />;
   if (!product) return <ErrorMessage message="Product not found." />;
 

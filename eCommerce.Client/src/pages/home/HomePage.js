@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard';
 import ErrorMessage from '../../components/common/ErrorMessage';
-import Loader from '../../components/common/Loader';
 import useCart from '../../hooks/useCart';
 import useProducts from '../../hooks/useProducts';
 import { ROUTES } from '../../routes/routePaths';
@@ -37,7 +36,7 @@ export default function HomePage() {
           <Link to={ROUTES.products}>VIEW ALL <span aria-hidden="true">→</span></Link>
         </div>
         {loading
-          ? <Loader label="Loading new launches" />
+          ? null
           : error
             ? <ErrorMessage message={error.message} onRetry={reload} />
             : <div className="product-grid comet-product-grid">{products.slice(0, 8).map((product) => <ProductCard key={product.id} product={product} onAdd={addItem} isInCart={cartItems.some((item) => String(item.id) === String(product.id))} />)}</div>}

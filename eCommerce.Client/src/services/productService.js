@@ -1,9 +1,9 @@
-import { apiRequest, endpointPath } from './apiClient';
+import { endpointPath } from '../hooks/useAxios';
 import { getProductImageUrl } from '../utils/productImage';
 const productsPath = () => endpointPath('REACT_APP_PRODUCTS_PATH');
 const operationPath = (variableName) => endpointPath(variableName);
-const productRequest = (path, options = {}) => apiRequest(path, {
-  ...options,
+const productConfig = (config = {}) => ({
+  ...config,
   baseURL: endpointPath('REACT_APP_PRODUCTS_API_BASE_URL'),
 });
 
@@ -28,17 +28,17 @@ export const mapProduct = (product) => ({
   imageUrl: resolveProductImageUrl(product),
 });
 
-export async function getProducts(signal) {
-  const response = await productRequest(productsPath(), { signal });
+export async function getProducts(API, signal) {
+  const { data: response } = await API.get(productsPath(), productConfig({ signal }));
   return { ...response, data: Array.isArray(response.data) ? response.data.map(mapProduct) : [] };
 }
-export async function getProduct(id, signal) {
-  const response = await productRequest(`${operationPath('REACT_APP_PRODUCT_SEARCH_PATH')}/${encodeURIComponent(id)}`, { signal });
+export async function getProduct(API, id, signal) {
+  const { data: response } = await API.get(`${operationPath('REACT_APP_PRODUCT_SEARCH_PATH')}/${encodeURIComponent(id)}`, productConfig({ signal }));
   const product = Array.isArray(response.data) ? response.data[0] : response.data;
   return product ? mapProduct(product) : null;
 }
-export async function getProductsByCategory(category, signal) {
-  const response = await productRequest(`${operationPath('REACT_APP_PRODUCT_SEARCH_PATH')}/${encodeURIComponent(category)}`, { signal });
+export async function getProductsByCategory(API, category, signal) {
+  const { data: response } = await API.get(`${operationPath('REACT_APP_PRODUCT_SEARCH_PATH')}/${encodeURIComponent(category)}`, productConfig({ signal }));
   const products = Array.isArray(response?.data)
     ? response.data
     : Array.isArray(response)
@@ -48,6 +48,15 @@ export async function getProductsByCategory(category, signal) {
         : [];
   return products.map(mapProduct);
 }
-export const createProduct = (product) => productRequest(operationPath('REACT_APP_PRODUCT_ADD_PATH'), { method: 'POST', body: product });
-export const updateProduct = (id, product) => productRequest(operationPath('REACT_APP_PRODUCT_UPDATE_PATH'), { method: 'POST', body: { ...product, productId: id } });
-export const deleteProduct = (id) => productRequest(`${operationPath('REACT_APP_PRODUCT_DELETE_PATH')}/${encodeURIComponent(id)}`, { method: 'POST' });
+export async function createProduct(API, product) {
+  const { data } = await API.post(operationPath('REACT_APP_PRODUCT_ADD_PATH'), product, productConfig());
+  return data;
+}
+export async function updateProduct(API, id, product) {
+  const { data } = await API.post(operationPath('REACT_APP_PRODUCT_UPDATE_PATH'), { ...product, productId: id }, productConfig());
+  return data;
+}
+export async function deleteProduct(API, id) {
+  const { data } = await API.post(`${operationPath('REACT_APP_PRODUCT_DELETE_PATH')}/${encodeURIComponent(id)}`, null, productConfig());
+  return data;
+}

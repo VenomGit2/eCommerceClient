@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getProduct } from '../services/productService';
+import useAxios from './useAxios';
 
 export default function useProductSearch() {
+  const API = useAxios();
   const controllerRef = useRef(null);
   const [state, setState] = useState({ product: null, loading: false, error: null, hasSearched: false });
 
@@ -14,14 +16,14 @@ export default function useProductSearch() {
     setState({ product: null, loading: true, error: null, hasSearched: true });
 
     try {
-      const product = await getProduct(normalizedProductId, controllerRef.current.signal);
+      const product = await getProduct(API, normalizedProductId, controllerRef.current.signal);
       setState({ product, loading: false, error: null, hasSearched: true });
       return product;
     } catch (error) {
       if (error.name !== 'AbortError') setState({ product: null, loading: false, error, hasSearched: true });
       return null;
     }
-  }, []);
+  }, [API]);
 
   const clear = useCallback(() => {
     controllerRef.current?.abort();
@@ -32,4 +34,3 @@ export default function useProductSearch() {
 
   return { ...state, search, clear };
 }
-

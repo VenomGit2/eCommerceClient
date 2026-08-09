@@ -1,16 +1,24 @@
+import { useEffect, useState } from 'react';
 import AppFooter from './components/AppFooter';
 import AppHeader from './components/AppHeader';
+import Loader from './components/common/Loader';
 import AuthContainer from './containers/AuthContainer';
 import CartContainer from './containers/CartContainer';
 import AppRoutes from './routes/AppRoutes';
 import ThemeProvider from './themes/ThemeProvider';
+import { subscribeToApiLoading } from './hooks/useAxios';
 
 export default function App() {
+  const [apiLoading, setApiLoading] = useState(false);
+
+  useEffect(() => subscribeToApiLoading(setApiLoading), []);
+
   return (
     <ThemeProvider>
       <AuthContainer>
         <CartContainer>
           <div className="app-shell">
+            {apiLoading && <Loader label="Loading..." />}
             <AppHeader />
             <main className="page-container" id="main-content"><AppRoutes /></main>
             <AppFooter />
@@ -20,4 +28,3 @@ export default function App() {
     </ThemeProvider>
   );
 }
-

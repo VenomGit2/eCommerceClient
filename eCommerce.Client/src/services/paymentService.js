@@ -1,3 +1,6 @@
-import { apiRequest, endpointPath } from './apiClient';
-export const submitPayment = (payment, token) => apiRequest(endpointPath('REACT_APP_PAYMENTS_PATH'), { method: 'POST', body: payment, token });
+import { endpointPath } from '../hooks/useAxios';
 
+export async function submitPayment(API, payment) {
+  const { data } = await API.post(endpointPath('REACT_APP_PAYMENTS_PATH'), payment);
+  return data;
+}

@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Silent Renew Token</title>
+  </head>
+
+  <body>
+    <!--<script src="oidc-client.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/oidc-client/1.10.1/oidc-client.min.js"></script>
+    <script>
+      var config = {
+        userStore: new Oidc.WebStorageStateStore({ store: window.localStorage }),
+      };
+
+      new Oidc.UserManager(config).signinSilentCallback().catch(function () {
+        // The parent application handles silent-renew failures.
+      });
+    </script>
+  </body>
+</html>

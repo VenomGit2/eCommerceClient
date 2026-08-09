@@ -151,7 +151,7 @@ form { display: grid; gap: 20px; margin-block: 28px; }
 .link-cards .card::after { bottom: 26px; content: '↗'; font-size: 1.2rem; position: absolute; right: 26px; }
 
 /* States, tables, admin */
-.loader { align-items: center; display: flex; gap: 12px; justify-content: center; min-height: 220px; }
+.loader { align-items: center; backdrop-filter: blur(2px); background: rgb(255 255 255 / 82%); display: flex; gap: 12px; inset: 0; justify-content: center; min-height: 100vh; position: fixed; z-index: 1000; }
 .loader__spinner { animation: spin .8s linear infinite; border: 2px solid var(--grey); border-radius: 50%; border-top-color: var(--black); height: 24px; width: 24px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .notice { padding: 16px; }

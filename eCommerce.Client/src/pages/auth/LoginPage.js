@@ -1,13 +1,35 @@
-import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import ErrorMessage from '../../components/common/ErrorMessage';
-import Input from '../../components/common/Input';
 import useAuth from '../../hooks/useAuth';
 import { ROUTES } from '../../routes/routePaths';
+
 export default function LoginPage() {
-  const [credentials, setCredentials] = useState({ email: '', password: '' });
-  const { login, status, error } = useAuth(); const navigate = useNavigate(); const location = useLocation();
-  const submit = async (event) => { event.preventDefault(); try { await login(credentials); navigate(location.state?.from?.pathname || ROUTES.account, { replace: true }); } catch {} };
-  return <section className="form-page"><h1>Sign in</h1>{error && <ErrorMessage message={error} />}<form onSubmit={submit}><Input label="Email" type="email" autoComplete="email" required value={credentials.email} onChange={(e) => setCredentials({ ...credentials, email: e.target.value })} /><Input label="Password" type="password" autoComplete="current-password" required value={credentials.password} onChange={(e) => setCredentials({ ...credentials, password: e.target.value })} /><Button type="submit" disabled={status === 'loading'}>{status === 'loading' ? 'Signing in…' : 'Sign in'}</Button></form><p>New customer? <Link to={ROUTES.register}>Create an account</Link>.</p></section>;
+  const { login, status, error } = useAuth();
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const requestedReturnPath = query.get('returnTo');
+  const returnPath = requestedReturnPath?.startsWith('/')
+    ? requestedReturnPath
+    : location.state?.from?.pathname || ROUTES.account;
+  const loginRequired = query.get('reason') === 'login-required';
+  const [authenticationMessage] = useState(() => (
+    sessionStorage.getItem('authenticationMessage')
+    || 'Your session has expired or login is required. Please sign in to continue.'
+  ));
+
+  useEffect(() => {
+    if (loginRequired) sessionStorage.removeItem('authenticationMessage');
+  }, [loginRequired]);
+
+  return <section className="form-page">
+    <h1>Sign in</h1>
+    {loginRequired && <ErrorMessage message={authenticationMessage} />}
+    {error && <ErrorMessage message={error} />}
+    <p>Continue to securely sign in or register.</p>
+    <Button type="button" disabled={status === 'loading'} onClick={() => login(returnPath)}>
+      {status === 'loading' ? 'Redirecting...' : 'Sign in'}
+    </Button>
+  </section>;
 }

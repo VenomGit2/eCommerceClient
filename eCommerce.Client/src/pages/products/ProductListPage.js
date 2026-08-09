@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard';
 import EmptyState from '../../components/common/EmptyState';
 import ErrorMessage from '../../components/common/ErrorMessage';
-import Loader from '../../components/common/Loader';
 import useCart from '../../hooks/useCart';
 import useProductCategory from '../../hooks/useProductCategory';
 import useProductSearch from '../../hooks/useProductSearch';
@@ -66,7 +65,7 @@ export default function ProductListPage() {
   const resultsError = productSearch.error || categorySearch.error;
   const hasActiveFilter = productSearch.hasSearched || Boolean(categorySearch.category);
 
-  if (loading) return <Loader label="Loading products" />;
+  if (loading) return null;
   if (error) return <ErrorMessage message={error.message} onRetry={reload} />;
 
   return <section>
@@ -92,7 +91,7 @@ export default function ProductListPage() {
     </div>
 
     {resultsLoading
-      ? <Loader label={categorySearch.category ? `Loading ${formatCategoryLabel(categorySearch.category)}` : 'Searching products'} />
+      ? null
       : resultsError
         ? <ErrorMessage message={resultsError.message} onRetry={() => categorySearch.category ? categorySearch.loadCategory(categorySearch.category) : productSearch.search(searchTerm)} />
         : displayedProducts.length

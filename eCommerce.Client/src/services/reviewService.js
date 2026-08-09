@@ -1,5 +1,10 @@
-import { apiRequest, endpointPath } from './apiClient';
+import { endpointPath } from '../hooks/useAxios';
 const path = () => endpointPath('REACT_APP_REVIEWS_PATH');
-export const getReviews = (signal) => apiRequest(path(), { signal });
-export const createReview = (review, token) => apiRequest(path(), { method: 'POST', body: review, token });
-
+export async function getReviews(API, signal) {
+  const { data } = await API.get(path(), { signal });
+  return data;
+}
+export async function createReview(API, review) {
+  const { data } = await API.post(path(), review);
+  return data;
+}

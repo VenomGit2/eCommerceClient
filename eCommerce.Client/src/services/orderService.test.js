@@ -1,32 +1,27 @@
-import { apiRequest, endpointPath } from './apiClient';
 import { createOrder } from './orderService';
 
-jest.mock('./apiClient', () => ({
-  apiRequest: jest.fn(),
-  endpointPath: jest.fn((variableName) => ({
-    REACT_APP_ORDERS_API_BASE_URL: 'https://orders.example/',
-    REACT_APP_ORDER_CREATE_PATH: 'api/orders/createorder',
-  }[variableName])),
-}));
-
 describe('createOrder', () => {
+  const originalEnv = process.env;
+
   beforeEach(() => {
-    endpointPath.mockImplementation((variableName) => ({
+    process.env = {
+      ...originalEnv,
       REACT_APP_ORDERS_API_BASE_URL: 'https://orders.example/',
       REACT_APP_ORDER_CREATE_PATH: 'api/orders/createorder',
-    }[variableName]));
+    };
   });
 
-  it('posts the order payload to the create endpoint', async () => {
+  afterAll(() => {
+    process.env = originalEnv;
+  });
+
+  it('posts the order payload through the supplied Axios instance', async () => {
     const order = { shippingAddress: '123 Main Street', items: [{ id: 1, quantity: 2 }] };
-    apiRequest.mockResolvedValueOnce({ id: 42 });
+    const API = { post: jest.fn().mockResolvedValue({ data: { id: 42 } }) };
 
-    await createOrder(order, 'access-token');
+    await createOrder(API, order);
 
-    expect(apiRequest).toHaveBeenCalledWith('api/orders/createorder', {
-      method: 'POST',
-      token: 'access-token',
-      body: order,
+    expect(API.post).toHaveBeenCalledWith('api/orders/createorder', order, {
       baseURL: 'https://orders.example/',
     });
   });
