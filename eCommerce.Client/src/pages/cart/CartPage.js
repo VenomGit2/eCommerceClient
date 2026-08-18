@@ -5,7 +5,6 @@ import EmptyState from '../../components/common/EmptyState';
 import useCart from '../../hooks/useCart';
 import { ROUTES } from '../../routes/routePaths';
 import { formatCurrency } from '../../utils/currency';
-import { getProductImageUrl } from '../../utils/productImage';
 import emptyCartImage from '../../assets/empty-cart.svg';
 
 export default function CartPage() {
@@ -18,11 +17,13 @@ export default function CartPage() {
       <ul className="cart-list">
         {items.map((item) => {
           const productPath = `${ROUTES.products}/${encodeURIComponent(item.id)}`;
-          const imageUrl = item.imageUrl || getProductImageUrl(item.name, item.id);
+          const imageUrl = item.imageUrl;
           return (
             <li key={item.id} className="cart-item">
               <Link className="cart-item__media" to={productPath} aria-label={`View ${item.name} details`}>
-                <img src={imageUrl} alt={item.name || 'Product'} loading="lazy" width="160" height="160" />
+                {imageUrl
+                  ? <img src={imageUrl} alt={item.name || 'Product'} loading="lazy" width="160" height="160" />
+                  : <span className="product-image-placeholder" role="img" aria-label={`No image available for ${item.name || 'this product'}`}><span aria-hidden="true">No image</span></span>}
                 <span className="cart-item__view" aria-hidden="true">View ↗</span>
               </Link>
               <div className="cart-item__details">

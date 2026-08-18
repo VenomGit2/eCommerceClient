@@ -30,3 +30,10 @@ export async function deleteOrder(API, orderId) {
   const { data } = await API.get(`${operationPath('REACT_APP_ORDER_DELETE_PATH')}/${encodeURIComponent(orderId)}`, orderConfig());
   return data;
 }
+
+export async function cancelOrder(API, orderId) {
+  const path = `${operationPath('REACT_APP_ORDERS_PATH')}/${encodeURIComponent(orderId)}/cancel`;
+  const { data } = await API.post(path, null, orderConfig());
+  if (data?.success === false) throw new Error(data.error || 'The order could not be cancelled.');
+  return data;
+}

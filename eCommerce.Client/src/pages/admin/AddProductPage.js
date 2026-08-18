@@ -25,5 +25,5 @@ export default function AddProductPage() {
     }
   };
 
-  return <section><p className="eyebrow">Administration</p><h1>Add product</h1><AdminProductTabs />{state.error && <ErrorMessage message={state.error} />}{state.success && <p className="notice notice--success" role="status">{state.success}</p>}<form className="admin-product-form" onSubmit={submit}><ProductFormFields product={product} setProduct={setProduct} /><Button type="submit" disabled={state.submitting}>{state.submitting ? 'Adding product…' : 'Add product'}</Button></form></section>;
+  return <section className="admin-page"><div className="admin-page__heading"><p className="eyebrow">Administration</p><h1>Add product</h1></div><AdminProductTabs />{state.error && <ErrorMessage message={state.error} />}{state.success && <p className="notice notice--success" role="status">{state.success}</p>}<form className="admin-product-form" onSubmit={submit}><ProductFormFields product={product} setProduct={setProduct} /><Button type="submit" disabled={state.submitting}>{state.submitting ? 'Adding product…' : 'Add product'}</Button></form></section>;
 }

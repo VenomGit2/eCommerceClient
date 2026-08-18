@@ -1,5 +1,5 @@
 import { endpointPath } from '../hooks/useAxios';
-import { getProductImageUrl } from '../utils/productImage';
+import { resolveProductImageUrl as resolveImageUrl } from '../utils/productImage';
 const productsPath = () => endpointPath('REACT_APP_PRODUCTS_PATH');
 const operationPath = (variableName) => endpointPath(variableName);
 const productConfig = (config = {}) => ({
@@ -8,15 +8,10 @@ const productConfig = (config = {}) => ({
 });
 
 const resolveProductImageUrl = (product) => {
-  if (!product.imageUrl) return getProductImageUrl(product.productName, product.productId);
-  try {
-    return new URL(
-      product.imageUrl,
-      endpointPath('REACT_APP_PRODUCTS_API_BASE_URL'),
-    ).toString();
-  } catch {
-    return getProductImageUrl(product.productName, product.productId);
-  }
+  return resolveImageUrl(
+    product.imageUrl,
+    endpointPath('REACT_APP_PRODUCTS_API_BASE_URL'),
+  );
 };
 
 export const mapProduct = (product) => ({

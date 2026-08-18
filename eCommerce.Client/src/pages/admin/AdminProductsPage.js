@@ -5,6 +5,7 @@ import useProducts from '../../hooks/useProducts';
 import AdminProductTabs from './AdminProductTabs';
 export default function AdminProductsPage() {
   const { products, loading, error, reload } = useProducts();
-  if (loading) return null; if (error) return <ErrorMessage message={error.message} onRetry={reload} />;
-  return <section><p className="eyebrow">Administration</p><h1>Products</h1><AdminProductTabs />{products.length ? <Table caption="Product catalog" rows={products} columns={[{ key: 'id', label: 'ID' }, { key: 'name', label: 'Name' }, { key: 'price', label: 'Price' }]} /> : <EmptyState title="No products available" />}</section>;
+  if (loading) return <section className="admin-page"><div className="admin-page__heading"><p className="eyebrow">Administration</p><h1>Products</h1></div><AdminProductTabs /><div className="section-status" role="status"><span className="loader__spinner" aria-hidden="true" />Loading products…</div></section>;
+  if (error) return <section className="admin-page"><div className="admin-page__heading"><p className="eyebrow">Administration</p><h1>Products</h1></div><AdminProductTabs /><ErrorMessage message={error.message} onRetry={reload} /></section>;
+  return <section className="admin-page"><div className="admin-page__heading"><p className="eyebrow">Administration</p><h1>Products</h1></div><AdminProductTabs />{products.length ? <Table caption="Product catalog" rows={products} columns={[{ key: 'id', label: 'ID' }, { key: 'name', label: 'Name' }, { key: 'price', label: 'Price' }]} /> : <EmptyState title="No products available" />}</section>;
 }
