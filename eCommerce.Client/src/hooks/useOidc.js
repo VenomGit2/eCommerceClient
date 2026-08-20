@@ -4,8 +4,12 @@ import { OIDC_ACCESS_TOKEN_KEY } from '../utils/moduleAccess';
 
 const appUrl = `${window.location.origin}/`;
 const loginUrl = `${window.location.origin}/login`;
+const oidcAuthority = process.env.REACT_APP_OPENID_AUTHORITY;
+const ngrokHeaders = oidcAuthority?.includes('.ngrok-free.')
+  ? { 'ngrok-skip-browser-warning': 'true' }
+  : {};
 const oidcConfig = {
-  authority: process.env.REACT_APP_OPENID_AUTHORITY,
+  authority: oidcAuthority,
   client_id: process.env.REACT_APP_OPENID_CLIENT_ID,
   redirect_uri: process.env.REACT_APP_OPENID_REDIRECT_URL || appUrl,
   response_type: process.env.REACT_APP_OPENID_RESPONSE_TYPE || 'code',
@@ -14,6 +18,7 @@ const oidcConfig = {
   silent_redirect_uri: process.env.REACT_APP_OPENID_SILENT_REDIRECT_URI || appUrl,
   automaticSilentRenew: true,
   loadUserInfo: true,
+  extraHeaders: ngrokHeaders,
   userStore: new WebStorageStateStore({ store: window.localStorage }),
 };
 

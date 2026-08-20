@@ -47,6 +47,9 @@ export function subscribeToApiLoading(listener) {
 function createAxiosInstance() {
   const baseURL = process.env.REACT_APP_API_BASE_URL;
   if (!baseURL) throw new Error('REACT_APP_API_BASE_URL is not configured.');
+  const ngrokHeaders = baseURL.includes('.ngrok-free.')
+    ? { 'ngrok-skip-browser-warning': 'true' }
+    : {};
 
   const instance = axios.create({
     baseURL,
@@ -54,6 +57,7 @@ function createAxiosInstance() {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
+      ...ngrokHeaders,
     },
   });
 
