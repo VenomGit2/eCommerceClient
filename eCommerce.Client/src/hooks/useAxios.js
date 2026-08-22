@@ -64,6 +64,14 @@ function createAxiosInstance() {
   instance.interceptors.request.use(async (config) => {
     updateLoading(1, config.hideLoader);
     try {
+      if (config.data instanceof FormData) {
+        if (typeof config.headers.delete === 'function') {
+          config.headers.delete('Content-Type');
+        } else {
+          delete config.headers['Content-Type'];
+        }
+      }
+
       const accessToken = await getOidcAccessToken();
       if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
       return config;
