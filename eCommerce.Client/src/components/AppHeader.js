@@ -32,7 +32,7 @@ export default function AppHeader() {
       <nav className="nav page-container" aria-label="Main navigation">
         <button className="nav__toggle" type="button" aria-label="Toggle navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}><span /><span /><span /></button>
         <div className={`nav__links nav__links--primary ${menuOpen ? 'nav__links--open' : ''}`}>
-          {!hasAdminAccess && <NavLink className="nav__icon-link" to={ROUTES.newIn} onClick={closeMenu} aria-label="New arrivals" title="New arrivals"><SparkIcon /><span>New in</span></NavLink>}
+          {!hasAdminAccess && <NavLink className="nav__icon-link" to={ROUTES.home} end onClick={closeMenu} aria-label="Fresh drops on home" title="Fresh drops"><SparkIcon /><span>Fresh drops</span></NavLink>}
           {!hasAdminAccess && <NavLink className="nav__icon-link" to={ROUTES.products} onClick={closeMenu} aria-label="Shop products" title="Shop"><ShopIcon /><span>Shop</span></NavLink>}
           {isAuthenticated && !hasAdminAccess && <NavLink className="nav__icon-link" to={ROUTES.orders} onClick={closeMenu} aria-label="Your orders" title="Orders"><OrdersIcon /><span>Orders</span></NavLink>}
           {hasAdminAccess && <NavLink className="nav__icon-link" to={ROUTES.admin} onClick={closeMenu} aria-label="Administration" title="Administration"><AdminIcon /><span>Admin</span></NavLink>}

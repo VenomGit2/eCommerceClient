@@ -19,7 +19,6 @@ import NotFoundPage from '../pages/errors/NotFoundPage';
 import HomePage from '../pages/home/HomePage';
 import ProductDetailPage from '../pages/products/ProductDetailPage';
 import ProductListPage from '../pages/products/ProductListPage';
-import NewInPage from '../pages/products/NewInPage';
 import AdminRoute from './AdminRoute';
 import ProtectedRoute from './ProtectedRoute';
 import PublicRoute from './PublicRoute';
@@ -30,7 +29,6 @@ export default function AppRoutes() {
   return <Routes>
     <Route element={<StorefrontRoute />}>
       <Route path={ROUTES.home} element={<HomePage />} />
-      <Route path={ROUTES.newIn} element={<NewInPage />} />
       <Route path={ROUTES.products} element={<ProductListPage />} />
       <Route path={`${ROUTES.products}/:productId`} element={<ProductDetailPage />} />
       <Route path={ROUTES.cart} element={<CartPage />} />

@@ -53,15 +53,11 @@ export default function ProductCard({ product, onAdd, isInCart = false }) {
     const vertical = (event.clientY - bounds.top) / bounds.height;
     event.currentTarget.style.setProperty('--card-rotate-x', `${(vertical - 0.5) * -14}deg`);
     event.currentTarget.style.setProperty('--card-rotate-y', `${(horizontal - 0.5) * 18}deg`);
-    event.currentTarget.style.setProperty('--card-light-x', `${horizontal * 100}%`);
-    event.currentTarget.style.setProperty('--card-light-y', `${vertical * 100}%`);
   };
 
   const resetProduct = (event) => {
     event.currentTarget.style.removeProperty('--card-rotate-x');
     event.currentTarget.style.removeProperty('--card-rotate-y');
-    event.currentTarget.style.removeProperty('--card-light-x');
-    event.currentTarget.style.removeProperty('--card-light-y');
   };
 
   return (

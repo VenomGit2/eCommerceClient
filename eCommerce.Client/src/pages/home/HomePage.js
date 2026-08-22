@@ -48,7 +48,7 @@ export default function HomePage() {
             </div>
             <span className="comet-hero__platform" aria-hidden="true" />
           </div>
-          <Link className="comet-hero__drop-card" to={ROUTES.newIn} aria-label={`Explore ${heroProduct?.name || 'the newest product'} in New In`}>
+          <Link className="comet-hero__drop-card" to={`${ROUTES.home}#new-launches-title`} aria-label="Explore the latest products on this page">
             <span className="comet-hero__drop-label"><span>01</span> New drop</span>
             <strong>{heroProduct?.category || 'Latest arrival'}</strong>
             <span className="comet-hero__drop-action">{products.length || 'New'} {products.length === 1 ? 'arrival' : 'arrivals'} <span aria-hidden="true">→</span></span>
