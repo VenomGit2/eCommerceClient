@@ -5,6 +5,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 import useCart from '../../hooks/useCart';
 import useProducts from '../../hooks/useProducts';
 import { ROUTES } from '../../routes/routePaths';
+import { formatCurrency } from '../../utils/currency';
 
 export default function HomePage() {
   const { products, loading, error, reload } = useProducts();
@@ -30,10 +31,10 @@ export default function HomePage() {
     <div className="comet-home">
       <section className="comet-hero">
         <div className="comet-hero__copy">
-          <p><span className="comet-hero__live" aria-hidden="true" /> NEW SEASON / 2026</p>
-          <h1>OWN<br />YOUR<br />EVERYDAY</h1>
-          <p className="comet-hero__intro">Everyday objects, selected for the way they look, feel, and live in your space.</p>
-          <Link className="comet-link" to={ROUTES.products}>SHOP THE COLLECTION <span aria-hidden="true">↗</span></Link>
+          <p><span className="comet-hero__live" aria-hidden="true" /> NEW ENERGY / 2026</p>
+          <h1>YOUR<br />VIBE<br />UPGRADED</h1>
+          <p className="comet-hero__intro">Fresh finds for your setup, your space, and your main-character era.</p>
+          <Link className="comet-link" to={ROUTES.products}>SHOP THE DROP <span aria-hidden="true">↗</span></Link>
         </div>
         <div className="comet-hero__product" onPointerMove={moveScene} onPointerLeave={resetScene}>
           <div className="comet-hero__scene" ref={sceneRef}>
@@ -47,11 +48,15 @@ export default function HomePage() {
             </div>
             <span className="comet-hero__platform" aria-hidden="true" />
           </div>
-          <span className="comet-hero__stamp">NEW<br />DROP</span>
+          <Link className="comet-hero__drop-card" to={ROUTES.newIn} aria-label={`Explore ${heroProduct?.name || 'the newest product'} in New In`}>
+            <span className="comet-hero__drop-label"><span>01</span> New drop</span>
+            <strong>{heroProduct?.category || 'Latest arrival'}</strong>
+            <span className="comet-hero__drop-action">{products.length || 'New'} {products.length === 1 ? 'arrival' : 'arrivals'} <span aria-hidden="true">→</span></span>
+          </Link>
           <span className="comet-hero__hint" aria-hidden="true">MOVE TO EXPLORE <span>3D</span></span>
           <div className="comet-hero__caption">
-            <span>{heroProduct?.name || 'THE NEW EDIT'}</span>
-            <Link to={heroProduct?.id != null ? `/products/${encodeURIComponent(heroProduct.id)}` : ROUTES.products}>DISCOVER <span aria-hidden="true">→</span></Link>
+            <span className="comet-hero__caption-product"><strong>{heroProduct?.name || 'THE NEW EDIT'}</strong>{heroProduct?.category && <small>{heroProduct.category}</small>}</span>
+            <span className="comet-hero__caption-action">{heroProduct?.price != null && <strong>{formatCurrency(heroProduct.price, heroProduct.currency)}</strong>}<Link to={heroProduct?.id != null ? `/products/${encodeURIComponent(heroProduct.id)}` : ROUTES.products}>DISCOVER <span aria-hidden="true">→</span></Link></span>
           </div>
         </div>
       </section>
