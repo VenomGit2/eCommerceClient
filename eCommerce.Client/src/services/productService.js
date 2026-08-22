@@ -43,8 +43,15 @@ export async function getProductsByCategory(API, category, signal) {
         : [];
   return products.map(mapProduct);
 }
-export async function createProduct(API, product) {
-  const { data } = await API.post(operationPath('REACT_APP_PRODUCT_ADD_PATH'), product, productConfig());
+export async function createProduct(API, product, image) {
+  const formData = new FormData();
+  formData.append('productName', product.productName);
+  formData.append('category', product.category);
+  formData.append('unitPrice', String(product.unitPrice));
+  formData.append('quantityInStock', String(product.quantityInStock));
+  formData.append('image', image);
+
+  const { data } = await API.post(operationPath('REACT_APP_PRODUCT_ADD_PATH'), formData, productConfig());
   return data;
 }
 export async function updateProduct(API, id, product) {

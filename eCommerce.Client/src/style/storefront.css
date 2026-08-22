@@ -312,6 +312,17 @@ tbody tr:hover { background: var(--off-white); }
 .admin-tabs a:focus-visible { outline-offset: -4px; }
 .admin-product-form { background: var(--white); border: 1px solid var(--black); max-width: 720px; padding: clamp(24px,5vw,48px); }
 .admin-product-form .button { justify-self: start; min-width: 190px; }
+.product-image-field__control { align-items: center; border: 1px solid var(--line); display: grid; gap: 20px; grid-template-columns: 112px minmax(0,1fr); padding: 16px; }
+.product-image-field__preview,.product-image-field__placeholder { aspect-ratio: 1; background: var(--off-white); height: 112px; width: 112px; }
+.product-image-field__preview { object-fit: contain; padding: 8px; }
+.product-image-field__placeholder { align-items: center; color: var(--mid-grey); display: flex; flex-direction: column; justify-content: center; }
+.product-image-field__placeholder span { font-size: 2rem; font-weight: 300; line-height: 1; }
+.product-image-field__placeholder small,.product-image-field__help,.product-image-field__name { font-size: .66rem; }
+.product-image-field input[type='file'] { border-bottom: 0; min-height: auto; padding: 0; }
+.product-image-field input[type='file']::file-selector-button { background: var(--black); border: 1px solid var(--black); color: var(--white); cursor: pointer; font: inherit; font-size: .64rem; font-weight: 700; margin-right: 12px; padding: 10px 14px; text-transform: uppercase; }
+.product-image-field input[type='file']:focus-visible { outline: 2px solid var(--black); outline-offset: 4px; }
+.product-image-field__help { color: var(--mid-grey); line-height: 1.5; margin: 12px 0 0; }
+.product-image-field__name { font-weight: 700; margin: 7px 0 0; overflow-wrap: anywhere; }
 .danger-panel { background: color-mix(in srgb, var(--red) 5%, var(--white)); border: 1px solid var(--red); max-width: 760px; padding: clamp(24px,5vw,48px); }
 .danger-panel h2 { color: var(--red); text-transform: uppercase; }
 .danger-panel .admin-product-form { border: 0; margin-bottom: 0; padding: 0; }
@@ -578,6 +589,8 @@ tbody tr:hover { background: var(--off-white); }
 }
 
 @media (max-width: 600px) {
+  .product-image-field__control { align-items: stretch; grid-template-columns: 1fr; }
+  .product-image-field__preview,.product-image-field__placeholder { height: auto; max-width: 180px; width: 100%; }
   .orders-page__header,.order-detail__hero { align-items: flex-start; flex-direction: column; gap: 20px; }
   .order-card:hover { box-shadow: 4px 4px 0 var(--lime); transform: none; }
   .order-card__body { align-items: start; grid-template-columns: 1fr; }
