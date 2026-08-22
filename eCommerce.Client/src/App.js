@@ -8,7 +8,6 @@ import WishlistContainer from './containers/WishlistContainer';
 import AppRoutes from './routes/AppRoutes';
 import RouteErrorBoundary from './routes/RouteErrorBoundary';
 import ScrollToTop from './routes/ScrollToTop';
-import EmailOrderRedirect from './routes/EmailOrderRedirect';
 import ThemeProvider from './themes/ThemeProvider';
 import { subscribeToApiLoading } from './hooks/useAxios';
 
@@ -22,7 +21,6 @@ export default function App() {
       <AuthContainer>
         <CartContainer>
           <WishlistContainer>
-            <EmailOrderRedirect />
             <ScrollToTop />
             <div className="app-shell">
               {apiLoading && <Loader label="Loading..." />}

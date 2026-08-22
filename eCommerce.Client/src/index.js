@@ -7,6 +7,15 @@ import ErrorFallback from './components/common/ErrorFallback';
 import './style/global.css';
 import './style/storefront.css';
 
+const emailOrderId = new URLSearchParams(window.location.search).get('openOrder');
+if (emailOrderId && /^[0-9a-f-]{36}$/i.test(emailOrderId)) {
+  window.history.replaceState(
+    {},
+    document.title,
+    `/account/orders/${encodeURIComponent(emailOrderId)}`,
+  );
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary
