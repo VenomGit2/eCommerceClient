@@ -5,16 +5,20 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 import useAsync from '../../hooks/useAsync';
 import useCart from '../../hooks/useCart';
 import useAxios from '../../hooks/useAxios';
+import useAuth from '../../hooks/useAuth';
 import { ROUTES } from '../../routes/routePaths';
 import { getProduct } from '../../services/productService';
 import { getEntity } from '../../utils/apiResponse';
 import { formatCurrency } from '../../utils/currency';
+import { addToWishlist } from '../../services/wishlistService';
 
 export default function ProductDetailPage() {
   const API = useAxios();
   const { productId } = useParams();
   const { addItem, items } = useCart();
+  const { session } = useAuth();
   const [cartState, setCartState] = useState({ adding: false, error: '' });
+  const [wishlistState, setWishlistState] = useState({ saving: false, saved: false, error: '' });
   const loadProduct = useCallback((signal) => getProduct(API, productId, signal), [API, productId]);
   const { data, loading, error, reload } = useAsync(loadProduct, [loadProduct]);
   const product = getEntity(data);
@@ -35,6 +39,21 @@ export default function ProductDetailPage() {
     }
   };
 
+  const saveToWishlist = async () => {
+    if (wishlistState.saving || wishlistState.saved) return;
+    setWishlistState({ saving: true, saved: false, error: '' });
+    try {
+      await addToWishlist(API, product.id);
+      setWishlistState({ saving: false, saved: true, error: '' });
+    } catch (requestError) {
+      setWishlistState({
+        saving: false,
+        saved: false,
+        error: requestError.message || 'Could not save this product.'
+      });
+    }
+  };
+
   return (
     <article className="product-detail">
       {product.imageUrl
@@ -48,7 +67,11 @@ export default function ProductDetailPage() {
         {isInCart
           ? <Link className="button button--primary" to={ROUTES.cart}>Go to cart <span aria-hidden="true">→</span></Link>
           : <Button onClick={addToCart} disabled={product.id == null || cartState.adding} aria-live="polite">{cartState.adding ? 'Adding…' : 'Add to cart'}</Button>}
+        {session?.token && <Button variant="secondary" onClick={saveToWishlist} disabled={product.id == null || wishlistState.saving || wishlistState.saved}>
+          {wishlistState.saving ? 'Saving…' : wishlistState.saved ? 'Saved to wishlist' : 'Save to wishlist'}
+        </Button>}
         {cartState.error && <p className="field-error" role="alert">{cartState.error}</p>}
+        {wishlistState.error && <p className="field-error" role="alert">{wishlistState.error}</p>}
       </div>
     </article>
   );
