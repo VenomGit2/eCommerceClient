@@ -6,6 +6,11 @@ let activeRequests = 0;
 const loadingListeners = new Set();
 let redirectingToLogin = false;
 
+function navigateToLogin(loginUrl) {
+  window.history.replaceState(window.history.state, document.title, loginUrl);
+  window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
+}
+
 export function endpointPath(variableName, suffix = '') {
   const environment = {
     REACT_APP_AUTH_LOGIN_PATH: process.env.REACT_APP_AUTH_LOGIN_PATH,
@@ -107,7 +112,10 @@ function createAxiosInstance() {
         sessionStorage.setItem('authenticationMessage', unauthorizedMessage);
         clearOidcSession()
           .catch(() => {})
-          .finally(() => window.location.replace(loginUrl));
+          .finally(() => {
+            navigateToLogin(loginUrl);
+            redirectingToLogin = false;
+          });
       }
 
       const apiError = new Error(
