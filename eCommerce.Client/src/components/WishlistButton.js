@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useWishlist from '../hooks/useWishlist';
 import { ROUTES } from '../routes/routePaths';
@@ -7,6 +8,7 @@ function HeartIcon({ filled }) {
 }
 
 export default function WishlistButton({ product, className = '', showLabel = false }) {
+  const [animating, setAnimating] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, isPending, isSaved, loading, ready, toggleItem } = useWishlist();
@@ -23,6 +25,7 @@ export default function WishlistButton({ product, className = '', showLabel = fa
     }
     try {
       await toggleItem(product);
+      setAnimating(true);
     } catch {
       // The shared wishlist state exposes the request error to the page.
     }
@@ -32,14 +35,15 @@ export default function WishlistButton({ product, className = '', showLabel = fa
   return (
     <button
       type="button"
-      className={`wishlist-button ${saved ? 'is-saved' : ''} ${showLabel ? 'wishlist-button--labelled' : ''} ${className}`.trim()}
+      className={`wishlist-button ${saved ? 'is-saved' : ''} ${animating ? 'is-animating' : ''} ${showLabel ? 'wishlist-button--labelled' : ''} ${className}`.trim()}
       aria-label={label}
       aria-pressed={saved}
       disabled={product?.id == null || pending}
       onClick={toggle}
+      onAnimationEnd={() => setAnimating(false)}
     >
       {pending ? <span className="wishlist-button__spinner" aria-hidden="true" /> : <HeartIcon filled={saved} />}
-      {showLabel && <span>{pending ? 'Updatingâ€¦' : saved ? 'Saved to wishlist' : 'Save to wishlist'}</span>}
+      {showLabel && <span>{pending ? 'Updating…' : saved ? 'Saved to wishlist' : 'Save to wishlist'}</span>}
     </button>
   );
 }

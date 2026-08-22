@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../utils/currency';
+import { ROUTES } from '../routes/routePaths';
 import Button from './common/Button';
 import WishlistButton from './WishlistButton';
 
 export default function ProductCard({ product, onAdd, isInCart = false }) {
+  const navigate = useNavigate();
   const [added, setAdded] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [buying, setBuying] = useState(false);
   const [error, setError] = useState('');
   const { id, name, imageUrl, price, currency, category, rating, discountPercentage } = product;
 
@@ -30,6 +33,19 @@ export default function ProductCard({ product, onAdd, isInCart = false }) {
     }
   };
 
+  const buyNow = async () => {
+    if (buying) return;
+    setBuying(true);
+    setError('');
+    try {
+      if (!isInCart) await onAdd(product);
+      navigate(ROUTES.checkout);
+    } catch (requestError) {
+      setError(requestError.message || 'Could not continue to checkout.');
+      setBuying(false);
+    }
+  };
+
   const exploreProduct = (event) => {
     if (event.pointerType === 'touch' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -50,27 +66,34 @@ export default function ProductCard({ product, onAdd, isInCart = false }) {
 
   return (
     <article className="card product-card">
-      <WishlistButton product={product} className="product-card__wishlist" />
-      <Link className="product-card__media" to={`/products/${encodeURIComponent(id)}`} aria-label={`View ${name}`} onPointerMove={exploreProduct} onPointerLeave={resetProduct}>
-        {discountPercentage > 10 && <span className="product-card__badge">-{Math.round(discountPercentage)}%</span>}
-        <span className="product-card__3d-hint" aria-hidden="true">Explore 3D</span>
-        <span className="product-card__view" aria-hidden="true">View details <span>↗</span></span>
-        {imageUrl
-          ? <img src={imageUrl} alt={name || 'Product'} loading="lazy" width="360" height="360" />
-          : <span className="product-card__placeholder" aria-hidden="true">{name?.charAt(0)}</span>}
-      </Link>
+      <div className="product-card__visual">
+        <Link className="product-card__media" to={`/products/${encodeURIComponent(id)}`} aria-label={`View ${name}`} onPointerMove={exploreProduct} onPointerLeave={resetProduct}>
+          {discountPercentage > 10 && <span className="product-card__badge">-{Math.round(discountPercentage)}%</span>}
+          <span className="product-card__3d-hint" aria-hidden="true">Explore 3D</span>
+          <span className="product-card__view" aria-hidden="true">View details <span>↗</span></span>
+          {imageUrl
+            ? <img src={imageUrl} alt={name || 'Product'} loading="lazy" width="360" height="360" />
+            : <span className="product-card__placeholder" aria-hidden="true">{name?.charAt(0)}</span>}
+        </Link>
+        <WishlistButton product={product} className="product-card__wishlist" />
+      </div>
       <div className="card__body">
         {category && <span className="product-card__category">{category}</span>}
-        <h2><Link to={`/products/${encodeURIComponent(id)}`}>{name}</Link></h2>
+        <div className="product-card__title-row">
+          <h2><Link to={`/products/${encodeURIComponent(id)}`}>{name}</Link></h2>
+          {isInCart || added
+            ? <Link className="button button--ghost product-card__quick-add is-added" to={ROUTES.cart}>In cart ✓</Link>
+            : <Button variant="ghost" className="product-card__quick-add" onClick={addToCart} disabled={id == null || adding} aria-live="polite">
+              {adding ? 'Adding…' : 'Add to cart +'}
+            </Button>}
+        </div>
         <div className="product-card__meta">
           <strong>{formatCurrency(price, currency)}</strong>
           {rating && <span aria-label={`Rated ${rating} out of 5`}><span aria-hidden="true">★</span> {rating}</span>}
         </div>
-        {isInCart
-          ? <Link className="button button--primary product-card__action is-in-cart" to="/cart">Go to cart <span aria-hidden="true">→</span></Link>
-          : <Button className={`product-card__action ${added ? 'is-added' : ''}`} onClick={addToCart} disabled={id == null || adding || added} aria-live="polite">
-            {adding ? 'Adding…' : added ? 'Added to cart ✓' : 'Add to cart'}
-          </Button>}
+        <Button className="product-card__action product-card__buy-now" onClick={buyNow} disabled={id == null || buying}>
+          {buying ? 'Opening checkout…' : <>Buy now <span aria-hidden="true">→</span></>}
+        </Button>
         {error && <p className="field-error" role="alert">{error}</p>}
       </div>
     </article>

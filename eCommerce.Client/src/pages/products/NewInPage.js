@@ -44,7 +44,7 @@ export default function NewInPage() {
         <div className="new-in-hero__copy">
           <p className="eyebrow">Just landed / Catalog 2026</p>
           <h1 id="new-in-title">NEW<br />IN</h1>
-          <p>Fresh arrivals, considered essentials and the latest additions to the Commerce catalog.</p>
+          <p>Fresh arrivals, considered essentials and the latest additions to the Circuit &amp; Grain catalog.</p>
           <a className="comet-link" href="#new-in-collection">Explore the drop <span aria-hidden="true">↓</span></a>
         </div>
         <Link className="new-in-hero__feature" to={featuredProduct?.id ? `${ROUTES.products}/${encodeURIComponent(featuredProduct.id)}` : ROUTES.products}>
