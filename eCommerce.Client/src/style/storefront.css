@@ -113,10 +113,11 @@ main.page-container:has(.comet-home) { padding-top: 16px; width: min(1440px, cal
 .wishlist-button:hover:not(:disabled) { opacity: .65; transform: scale(1.08); }
 .wishlist-button.is-saved { background: transparent; color: var(--black); }
 .wishlist-button:disabled { cursor: wait; opacity: .55; }
-.product-card__wishlist { background: rgb(10 10 10 / 90%); color: #ffffff; height: 42px; position: absolute; right: 14px; top: 14px; width: 42px; z-index: 5; }
-.product-card__wishlist:hover:not(:disabled) { background: #ffffff; color: #0a0a0a; opacity: 1; transform: translateY(-2px); }
-.product-card__wishlist.is-saved { background: #0a0a0a; color: var(--lime); }
-.product-card__wishlist:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
+.product-card__wishlist { background: transparent; border-radius: 50%; color: #0a0a0a; height: 44px; position: absolute; right: 12px; top: 12px; width: 44px; z-index: 5; }
+.product-card__wishlist:hover:not(:disabled) { background: rgb(255 255 255 / 72%); color: #0a0a0a; opacity: 1; transform: scale(1.08); }
+.product-card__wishlist.is-saved { background: transparent; color: var(--lime); }
+.product-card__wishlist.is-saved svg { stroke: #0a0a0a; }
+.product-card__wishlist:focus-visible { background: rgb(255 255 255 / 82%); outline: 2px solid #0a0a0a; outline-offset: 2px; }
 .product-detail__wishlist { margin-left: 10px; vertical-align: middle; }
 
 :root[data-theme='dark'] .product-card__action {
@@ -131,6 +132,10 @@ main.page-container:has(.comet-home) { padding-top: 16px; width: min(1440px, cal
   color: #0a0a0a;
 }
 :root[data-theme='dark'] .product-card__quick-add:hover:not(:disabled) { background: transparent; color: var(--lime); }
+:root[data-theme='dark'] .product-card__wishlist { color: #f4f5f1; }
+:root[data-theme='dark'] .product-card__wishlist:hover:not(:disabled) { background: rgb(10 10 10 / 55%); color: #ffffff; }
+:root[data-theme='dark'] .product-card__wishlist.is-saved { background: transparent; color: var(--lime); }
+:root[data-theme='dark'] .product-card__wishlist:focus-visible { background: rgb(10 10 10 / 68%); outline-color: #f4f5f1; }
 :root[data-theme='dark'] .cart-link:hover { color: var(--lime); }
 .catalog-heading h1 { margin-bottom: 10px; }
 .catalog-heading p { margin: 0; }
