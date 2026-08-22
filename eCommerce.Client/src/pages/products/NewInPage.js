@@ -48,7 +48,7 @@ export default function NewInPage() {
           <a className="comet-link" href="#new-in-collection">Explore the drop <span aria-hidden="true">↓</span></a>
         </div>
         <Link className="new-in-hero__feature" to={featuredProduct?.id ? `${ROUTES.products}/${encodeURIComponent(featuredProduct.id)}` : ROUTES.products}>
-          <span className="new-in-hero__count">{String(products.length).padStart(2, '0')} pieces</span>
+          {products.length > 0 && <span className="new-in-hero__count" aria-label={`${products.length} products available`}>{products.length}</span>}
           {featuredProduct?.imageUrl
             ? <img src={featuredProduct.imageUrl} alt={featuredProduct.name || 'Featured new product'} width="680" height="680" />
             : <span className="new-in-hero__placeholder" aria-hidden="true">N</span>}

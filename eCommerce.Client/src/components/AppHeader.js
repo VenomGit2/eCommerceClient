@@ -38,7 +38,11 @@ export default function AppHeader() {
           {hasAdminAccess && <NavLink className="nav__icon-link" to={ROUTES.admin} onClick={closeMenu} aria-label="Administration" title="Administration"><AdminIcon /><span>Admin</span></NavLink>}
           {isAuthenticated && <button type="button" className="nav__signout nav__icon-link" aria-label="Sign out" title="Sign out" onClick={() => { logout(); closeMenu(); }}><SignOutIcon /><span>Sign out</span></button>}
         </div>
-        <Link className="brand" to={hasAdminAccess ? ROUTES.admin : ROUTES.home} onClick={closeMenu} aria-label={hasAdminAccess ? 'Circuit and Grain administration dashboard' : 'Circuit and Grain home'}><span className="brand__full">CIRCUIT &amp; GRAIN</span><span className="brand__compact" aria-hidden="true">C&amp;G</span></Link>
+        <Link className="brand" to={hasAdminAccess ? ROUTES.admin : ROUTES.home} onClick={closeMenu} aria-label={hasAdminAccess ? 'Circuit and Grain administration dashboard' : 'Circuit and Grain home'}>
+          <img className="brand__mark" src={`${process.env.PUBLIC_URL}/favicon.svg`} alt="" width="30" height="30" />
+          <span className="brand__full">CIRCUIT &amp; GRAIN</span>
+          <span className="brand__compact" aria-hidden="true">C&amp;G</span>
+        </Link>
         <div className="nav__utilities">
           <ThemeToggle />
           {!hasAdminAccess && <Link to={ROUTES.products} aria-label="Search products"><SearchIcon /></Link>}
