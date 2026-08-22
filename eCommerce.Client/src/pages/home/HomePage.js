@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard';
 import ErrorMessage from '../../components/common/ErrorMessage';
@@ -9,6 +10,21 @@ export default function HomePage() {
   const { products, loading, error, reload } = useProducts();
   const { addItem, items: cartItems } = useCart();
   const heroProduct = products[0];
+  const sceneRef = useRef(null);
+
+  const moveScene = (event) => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || event.pointerType === 'touch') return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const horizontal = ((event.clientX - bounds.left) / bounds.width) - 0.5;
+    const vertical = ((event.clientY - bounds.top) / bounds.height) - 0.5;
+    sceneRef.current?.style.setProperty('--scene-rotate-x', `${vertical * -18}deg`);
+    sceneRef.current?.style.setProperty('--scene-rotate-y', `${horizontal * 24}deg`);
+  };
+
+  const resetScene = () => {
+    sceneRef.current?.style.removeProperty('--scene-rotate-x');
+    sceneRef.current?.style.removeProperty('--scene-rotate-y');
+  };
 
   return (
     <div className="comet-home">
@@ -19,8 +35,8 @@ export default function HomePage() {
           <p className="comet-hero__intro">Everyday objects, selected for the way they look, feel, and live in your space.</p>
           <Link className="comet-link" to={ROUTES.products}>SHOP THE COLLECTION <span aria-hidden="true">↗</span></Link>
         </div>
-        <div className="comet-hero__product">
-          <div className="comet-hero__scene">
+        <div className="comet-hero__product" onPointerMove={moveScene} onPointerLeave={resetScene}>
+          <div className="comet-hero__scene" ref={sceneRef}>
             <span className="comet-hero__orbit comet-hero__orbit--one" aria-hidden="true" />
             <span className="comet-hero__orbit comet-hero__orbit--two" aria-hidden="true" />
             <span className="comet-hero__glow" aria-hidden="true" />
@@ -32,7 +48,7 @@ export default function HomePage() {
             <span className="comet-hero__platform" aria-hidden="true" />
           </div>
           <span className="comet-hero__stamp">NEW<br />DROP</span>
-          <span className="comet-hero__hint" aria-hidden="true">HOVER TO ROTATE <span>360&deg;</span></span>
+          <span className="comet-hero__hint" aria-hidden="true">MOVE TO EXPLORE <span>3D</span></span>
           <div className="comet-hero__caption">
             <span>{heroProduct?.name || 'THE NEW EDIT'}</span>
             <Link to={heroProduct?.id != null ? `/products/${encodeURIComponent(heroProduct.id)}` : ROUTES.products}>DISCOVER <span aria-hidden="true">→</span></Link>

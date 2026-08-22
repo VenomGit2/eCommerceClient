@@ -7,7 +7,7 @@ export default function StorefrontRoute() {
   const { session, status } = useAuth();
 
   if (status === 'loading') {
-    return <div className="section-status" role="status"><span className="loader__spinner" aria-hidden="true" />Loading your workspace…</div>;
+    return <div className="section-status" role="status"><span className="loader__spinner" aria-hidden="true" />Loading…</div>;
   }
 
   const hasAdminAccess = ModuleAccess('PRODUCT', null, session?.access_token);

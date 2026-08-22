@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatCurrency } from '../utils/currency';
 import Button from './common/Button';
+import WishlistButton from './WishlistButton';
 
 export default function ProductCard({ product, onAdd, isInCart = false }) {
   const [added, setAdded] = useState(false);
@@ -29,10 +30,30 @@ export default function ProductCard({ product, onAdd, isInCart = false }) {
     }
   };
 
+  const exploreProduct = (event) => {
+    if (event.pointerType === 'touch' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const horizontal = (event.clientX - bounds.left) / bounds.width;
+    const vertical = (event.clientY - bounds.top) / bounds.height;
+    event.currentTarget.style.setProperty('--card-rotate-x', `${(vertical - 0.5) * -14}deg`);
+    event.currentTarget.style.setProperty('--card-rotate-y', `${(horizontal - 0.5) * 18}deg`);
+    event.currentTarget.style.setProperty('--card-light-x', `${horizontal * 100}%`);
+    event.currentTarget.style.setProperty('--card-light-y', `${vertical * 100}%`);
+  };
+
+  const resetProduct = (event) => {
+    event.currentTarget.style.removeProperty('--card-rotate-x');
+    event.currentTarget.style.removeProperty('--card-rotate-y');
+    event.currentTarget.style.removeProperty('--card-light-x');
+    event.currentTarget.style.removeProperty('--card-light-y');
+  };
+
   return (
     <article className="card product-card">
-      <Link className="product-card__media" to={`/products/${encodeURIComponent(id)}`} aria-label={`View ${name}`}>
+      <WishlistButton product={product} className="product-card__wishlist" />
+      <Link className="product-card__media" to={`/products/${encodeURIComponent(id)}`} aria-label={`View ${name}`} onPointerMove={exploreProduct} onPointerLeave={resetProduct}>
         {discountPercentage > 10 && <span className="product-card__badge">-{Math.round(discountPercentage)}%</span>}
+        <span className="product-card__3d-hint" aria-hidden="true">Explore 3D</span>
         <span className="product-card__view" aria-hidden="true">View details <span>↗</span></span>
         {imageUrl
           ? <img src={imageUrl} alt={name || 'Product'} loading="lazy" width="360" height="360" />
