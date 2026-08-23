@@ -31,10 +31,12 @@ export async function getProducts(
   if (category) params.category = category;
 
   const { data: response } = await API.get(productsPath(), productConfig({ params, signal }));
-  const page = response?.data ?? {};
-  const items = Array.isArray(page.items) ? page.items.map(mapProduct) : [];
+  const payload = response?.data ?? {};
+  const rawItems = Array.isArray(payload) ? payload : payload.items;
+  const items = Array.isArray(rawItems) ? rawItems.map(mapProduct) : [];
+  const data = Array.isArray(payload) ? items : { ...payload, items };
 
-  return { ...response, data: { ...page, items } };
+  return { ...response, data };
 }
 
 export async function getProduct(API, id, signal) {

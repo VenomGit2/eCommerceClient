@@ -14,12 +14,19 @@ export function getEntity(response) {
 
 export function getPage(response) {
   const page = response?.data ?? response ?? {};
+  const items = getCollection(page);
+  const pageNumber = Number(page.pageNumber) || 1;
+  const pageSize = Number(page.pageSize) || items.length;
+  const totalItems = Number(page.totalItems ?? page.totalRecords) || items.length;
+  const totalPages = Number(page.totalPages)
+    || (totalItems > 0 ? Math.ceil(totalItems / Math.max(pageSize, 1)) : 0);
+
   return {
-    items: getCollection(page),
-    pageNumber: Number(page.pageNumber) || 1,
-    pageSize: Number(page.pageSize) || 0,
-    totalItems: Number(page.totalItems ?? page.totalRecords) || 0,
-    totalPages: Number(page.totalPages) || 0,
-    hasMore: Boolean(page.hasMore),
+    items,
+    pageNumber,
+    pageSize,
+    totalItems,
+    totalPages,
+    hasMore: page.hasMore ?? pageNumber < totalPages,
   };
 }
