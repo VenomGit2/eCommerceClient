@@ -23,25 +23,26 @@ export const mapProduct = (product) => ({
   imageUrl: resolveProductImageUrl(product),
 });
 
-export async function getProducts(API, signal) {
-  const { data: response } = await API.get(productsPath(), productConfig({ signal }));
-  return { ...response, data: Array.isArray(response.data) ? response.data.map(mapProduct) : [] };
+export async function getProducts(
+  API,
+  { pageNumber = 1, pageSize = 100, category = '', signal } = {},
+) {
+  const params = { pageNumber, pageSize };
+  if (category) params.category = category;
+
+  const { data: response } = await API.get(productsPath(), productConfig({ params, signal }));
+  const page = response?.data ?? {};
+  const items = Array.isArray(page.items) ? page.items.map(mapProduct) : [];
+
+  return { ...response, data: { ...page, items } };
 }
+
 export async function getProduct(API, id, signal) {
-  const { data: response } = await API.get(`${operationPath('REACT_APP_PRODUCT_SEARCH_PATH')}/${encodeURIComponent(id)}`, productConfig({ signal }));
-  const product = Array.isArray(response.data) ? response.data[0] : response.data;
+  const path = `${operationPath('REACT_APP_PRODUCT_SEARCH_PATH')}/${encodeURIComponent(id)}`;
+  const { data: response } = await API.get(path, productConfig({ signal }));
+  const product = Array.isArray(response?.data) ? response.data[0] : response?.data;
+
   return product ? mapProduct(product) : null;
-}
-export async function getProductsByCategory(API, category, signal) {
-  const { data: response } = await API.get(`${operationPath('REACT_APP_PRODUCT_SEARCH_PATH')}/${encodeURIComponent(category)}`, productConfig({ signal }));
-  const products = Array.isArray(response?.data)
-    ? response.data
-    : Array.isArray(response)
-      ? response
-      : response?.data
-        ? [response.data]
-        : [];
-  return products.map(mapProduct);
 }
 export async function createProduct(API, product, image) {
   const formData = new FormData();

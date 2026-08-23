@@ -6,8 +6,13 @@ const orderConfig = (config = {}) => ({
   baseURL: endpointPath('REACT_APP_ORDERS_API_BASE_URL'),
 });
 
-export async function getOrders(API, signal) {
-  const { data } = await API.get(operationPath('REACT_APP_ORDERS_PATH'), orderConfig({ signal }));
+export async function getOrders(API, { pageNumber = 1, pageSize = 12, signal } = {}) {
+  const config = orderConfig({
+    params: { pageNumber, pageSize },
+    signal,
+  });
+  const { data } = await API.get(operationPath('REACT_APP_ORDERS_PATH'), config);
+
   return data;
 }
 

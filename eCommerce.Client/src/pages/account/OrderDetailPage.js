@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import ErrorMessage from '../../components/common/ErrorMessage';
+import LoadingState from '../../components/common/LoadingState';
 import OrderProductImage from '../../components/orders/OrderProductImage';
 import OrderStatusBadge from '../../components/orders/OrderStatusBadge';
 import CancelOrderAction from '../../components/orders/CancelOrderAction';
@@ -37,7 +38,7 @@ export default function OrderDetailPage() {
   const { pay, payingOrderId, paymentError } = useRazorpayPayment();
   const { cancel, cancellingOrderId, cancellationError } = useOrderCancellation();
 
-  if (loading) return <div className="section-status" role="status"><span className="loader__spinner" aria-hidden="true" />Loading order details…</div>;
+  if (loading) return <LoadingState>Loading order details...</LoadingState>;
   if (error || !order) return <section><Link className="order-detail__back" to={ROUTES.orders}>Back to orders</Link><ErrorMessage message={error?.message || 'This order could not be found.'} onRetry={reload} /></section>;
 
   const items = order.orderItems ?? [];

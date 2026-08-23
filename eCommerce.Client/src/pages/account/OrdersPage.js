@@ -1,29 +1,27 @@
 import OrdersExperience from './OrdersExperience';
-import useAsync from '../../hooks/useAsync';
-import useAuth from '../../hooks/useAuth';
-import useAxios from '../../hooks/useAxios';
 import useRazorpayPayment from '../../hooks/useRazorpayPayment';
 import useOrderCancellation from '../../hooks/useOrderCancellation';
-import { getOrders } from '../../services/orderService';
-import { getCollection } from '../../utils/apiResponse';
+import usePaginatedOrders from '../../hooks/pagination/usePaginatedOrders';
 
 export default function OrdersPage() {
-  const API = useAxios();
-  const { session } = useAuth();
-  const { data, loading, error, reload } = useAsync(
-    (signal) => getOrders(API, signal),
-    [API, session?.token],
-  );
-  const orders = getCollection(data);
+  const { orders, page, changePage, loading, error, reload } = usePaginatedOrders();
   const { pay, payingOrderId, paymentError } = useRazorpayPayment();
   const { cancel, cancellingOrderId, cancellationError } = useOrderCancellation();
 
-  return <OrdersExperience
-    orders={orders}
-    loading={loading}
-    error={error}
-    reload={reload}
-    payment={{ pay, payingOrderId, paymentError }}
-    cancellation={{ cancel, cancellingOrderId, cancellationError }}
-  />;
+  return (
+    <OrdersExperience
+      orders={orders}
+      loading={loading}
+      error={error}
+      reload={reload}
+      payment={{ pay, payingOrderId, paymentError }}
+      cancellation={{ cancel, cancellingOrderId, cancellationError }}
+      pagination={{
+        currentPage: page.pageNumber,
+        totalPages: page.totalPages,
+        totalItems: page.totalItems,
+        onPageChange: changePage,
+      }}
+    />
+  );
 }

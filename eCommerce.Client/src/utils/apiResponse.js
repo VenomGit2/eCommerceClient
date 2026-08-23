@@ -11,3 +11,15 @@ export function getCollection(response) {
 export function getEntity(response) {
   return response?.data ?? response ?? null;
 }
+
+export function getPage(response) {
+  const page = response?.data ?? response ?? {};
+  return {
+    items: getCollection(page),
+    pageNumber: Number(page.pageNumber) || 1,
+    pageSize: Number(page.pageSize) || 0,
+    totalItems: Number(page.totalItems ?? page.totalRecords) || 0,
+    totalPages: Number(page.totalPages) || 0,
+    hasMore: Boolean(page.hasMore),
+  };
+}
