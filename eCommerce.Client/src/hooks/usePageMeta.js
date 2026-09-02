@@ -150,13 +150,11 @@ resetMeta();
 return undefined;
 }
 
-```
 applyMeta(meta);
 
 return () => {
   resetMeta();
 };
-```
 
 }, deps);
 }
