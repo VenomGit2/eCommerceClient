@@ -30,7 +30,8 @@ export function endpointPath(variableName, suffix = '') {
     REACT_APP_PAYMENTS_PATH: process.env.REACT_APP_PAYMENTS_PATH,
     REACT_APP_REVIEWS_PATH: process.env.REACT_APP_REVIEWS_PATH,
     REACT_APP_USERS_PATH: process.env.REACT_APP_USERS_PATH,
-    REACT_APP_WISHLIST_PATH: process.env.REACT_APP_WISHLIST_PATH,
+    REACT_APP_WISHLIST_API_BASE_URL: process.env.REACT_APP_WISHLIST_API_BASE_URL,
+    REACT_APP_WISHLIST_PATH : process.env.REACT_APP_WISHLIST_PATH
   };
   const value = environment[variableName];
   if (!value) throw new Error(`${variableName} is not configured.`);

@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard';
 import EmptyState from '../../components/common/EmptyState';
 import ErrorMessage from '../../components/common/ErrorMessage';
-import LoadingState from '../../components/common/LoadingState';
 import LoadMoreButton from '../../components/pagination/LoadMoreButton';
 import useCart from '../../hooks/useCart';
+import usePageMeta from '../../hooks/usePageMeta';
 import useProductSearch from '../../hooks/useProductSearch';
 import useProducts from '../../hooks/useProducts';
 import { PRODUCT_CATEGORIES, formatCategoryLabel } from '../../utils/productCategories';
@@ -13,6 +13,8 @@ import { PRODUCT_CATEGORIES, formatCategoryLabel } from '../../utils/productCate
 export default function ProductListPage() {
   const { addItem, items: cartItems } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const query = searchParams.get('q') || '';
   const selectedCategory = searchParams.get('category') || '';
   const [searchTerm, setSearchTerm] = useState(query);
@@ -36,6 +38,15 @@ export default function ProductListPage() {
     clear: clearSearch,
   } = useProductSearch();
 
+  usePageMeta(
+    {
+      title: 'Shop All',
+      description: `Browse ${totalItems || 'all'} products selected for better everyday living.`,
+      url: `${process.env.REACT_APP_SITE_URL || 'https://ecommerceclient.insanedk46.workers.dev'}/products`,
+    },
+    [totalItems],
+  );
+
   useEffect(() => {
     setSearchTerm(query);
     if (query) {
@@ -44,6 +55,12 @@ export default function ProductListPage() {
       clearSearch();
     }
   }, [clearSearch, query, search]);
+
+  useEffect(() => {
+    if (!location.state?.focusProductSearch) return;
+    document.getElementById('product-id-search')?.focus();
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, location.state, navigate]);
 
   const cartProductIds = useMemo(
     () => new Set(cartItems.map((item) => String(item.id))),
@@ -75,7 +92,7 @@ export default function ProductListPage() {
     setSearchParams({});
   };
 
-  if (loading) return <LoadingState>Loading products...</LoadingState>;
+  if (loading) return null;
   if (error && !products.length) return <ErrorMessage message={error.message} onRetry={reload} />;
 
   let results;

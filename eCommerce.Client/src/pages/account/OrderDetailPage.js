@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import Button from '../../components/common/Button';
+import CopyButton from '../../components/common/CopyButton';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import LoadingState from '../../components/common/LoadingState';
 import OrderProductImage from '../../components/orders/OrderProductImage';
@@ -99,7 +100,13 @@ export default function OrderDetailPage() {
         </aside>
       </div>
 
-      <footer className="order-detail__reference"><span>Full order reference</span><code>{order.orderID}</code></footer>
+      <footer className="order-detail__reference">
+        <span>Full order reference</span>
+        <div className="order-detail__reference-row">
+          <code>{order.orderID}</code>
+          <CopyButton value={String(order.orderID)} iconOnly label="Copy reference" aria-label="Copy reference" title="Copy reference" />
+        </div>
+      </footer>
     </article>
   );
 }

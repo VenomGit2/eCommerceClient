@@ -1,11 +1,14 @@
 import { useCallback, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Button from '../../components/common/Button';
+import ShareButton from '../../components/common/ShareButton';
 import ErrorMessage from '../../components/common/ErrorMessage';
+import ProductReviews from './ProductReviews';
 import WishlistButton from '../../components/WishlistButton';
 import useAsync from '../../hooks/useAsync';
 import useCart from '../../hooks/useCart';
 import useAxios from '../../hooks/useAxios';
+import usePageMeta from '../../hooks/usePageMeta';
 import { ROUTES } from '../../routes/routePaths';
 import { getProduct } from '../../services/productService';
 import { getEntity } from '../../utils/apiResponse';
@@ -20,7 +23,23 @@ export default function ProductDetailPage() {
   const { data, loading, error, reload } = useAsync(loadProduct, [loadProduct]);
   const product = getEntity(data);
 
-  if (loading) return null;
+  const siteUrl = process.env.REACT_APP_SITE_URL || 'https://ecommerceclient.insanedk46.workers.dev';
+  usePageMeta(
+    product
+      ? {
+          title: product.name,
+          description: product.description || `Shop ${product.name} at Circuit & Grain.`,
+          image: product.imageUrl || undefined,
+          url: `${siteUrl.replace(/\/$/, '')}/products/${encodeURIComponent(productId)}`,
+          type: 'product',
+          price: product.price,
+          currency: product.currency || 'USD',
+        }
+      : null,
+    [product],
+  );
+
+  if (loading) return <div className="product-detail-skeleton" aria-label="Loading product" aria-busy="true"><span /><div><span /><span /><span /></div></div>;
   if (error) return <ErrorMessage message={error.message} onRetry={reload} />;
   if (!product) return <ErrorMessage message="Product not found." />;
 
@@ -46,12 +65,23 @@ export default function ProductDetailPage() {
         <h1>{product.name}</h1>
         {product.description && <p>{product.description}</p>}
         <p className="price">{formatCurrency(product.price, product.currency)}</p>
-        {isInCart
-          ? <Link className="button button--primary" to={ROUTES.cart}>Go to cart <span aria-hidden="true">→</span></Link>
-          : <Button onClick={addToCart} disabled={product.id == null || cartState.adding} aria-live="polite">{cartState.adding ? 'Adding…' : 'Add to cart'}</Button>}
-        <WishlistButton product={product} className="product-detail__wishlist" />
+        <div className="product-detail__actions">
+          {isInCart
+            ? <Link className="button button--primary" to={ROUTES.cart}>Go to cart <span aria-hidden="true">→</span></Link>
+            : <Button onClick={addToCart} disabled={product.id == null || cartState.adding} aria-live="polite">{cartState.adding ? 'Adding…' : 'Add to cart'}</Button>}
+          <ShareButton
+            title={product.name || 'Product'}
+            text={product.description ? `Check out ${product.name} at Circuit & Grain: ${product.description}` : `Check out ${product.name} at Circuit & Grain.`}
+            label="Share product"
+            dialogTitle="Share this product"
+            className="product-detail__share"
+            aria-label={`Share ${product.name || 'this product'}`}
+          />
+          <WishlistButton product={product} className="product-detail__wishlist" />
+        </div>
         {cartState.error && <p className="field-error" role="alert">{cartState.error}</p>}
       </div>
+      <ProductReviews product={product} />
     </article>
   );
 }

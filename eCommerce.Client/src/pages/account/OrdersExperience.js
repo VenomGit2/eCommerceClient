@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import AccountTabs from '../../components/common/AccountTabs';
 import Button from '../../components/common/Button';
+import CopyButton from '../../components/common/CopyButton';
 import EmptyState from '../../components/common/EmptyState';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import LoadingState from '../../components/common/LoadingState';
@@ -32,7 +33,16 @@ function OrderCard({ order, payment, cancellation, reload }) {
         <div className="order-card__topline">
           <div>
             <span className="order-card__label">Order</span>
-            <strong>#{orderNumber}</strong>
+            <div className="order-card__number-row">
+              <strong>#{orderNumber}</strong>
+              <CopyButton
+                value={String(order.orderID)}
+                iconOnly
+                label="Copy order ID"
+                aria-label="Copy order ID"
+                title="Copy order ID"
+              />
+            </div>
           </div>
           <time dateTime={order.orderDate}>{new Date(order.orderDate).toLocaleDateString()}</time>
         </div>

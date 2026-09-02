@@ -1,3 +1,4 @@
+import CopyButton from '../../components/common/CopyButton';
 import EmptyState from '../../components/common/EmptyState';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import LoadingState from '../../components/common/LoadingState';
@@ -41,9 +42,18 @@ export default function AdminOrdersPage() {
       key: 'orderID',
       label: 'Order',
       render: (order) => (
-        <code className="admin-order-reference" title={order.orderID}>
-          #{String(order.orderID).slice(0, 8).toUpperCase()}
-        </code>
+        <span className="admin-order-id-cell">
+          <code className="admin-order-reference" title={order.orderID}>
+            #{String(order.orderID).slice(0, 8).toUpperCase()}
+          </code>
+          <CopyButton
+            value={String(order.orderID)}
+            iconOnly
+            label="Copy order ID"
+            aria-label="Copy order ID"
+            title="Copy order ID"
+          />
+        </span>
       ),
     },
     {

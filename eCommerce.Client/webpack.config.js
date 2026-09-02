@@ -20,7 +20,11 @@ module.exports = (env = {}) => {
   }
 
   const copyPatterns = [
-    { from: './public/favicon.ico', to: './assets' },
+    { from: './public/favicon.ico', to: './favicon.ico' },
+    { from: './public/favicon.svg', to: './favicon.svg' },
+    { from: './public/favicon-32x32.png', to: './favicon-32x32.png' },
+    { from: './public/apple-touch-icon.png', to: './apple-touch-icon.png' },
+    { from: './public/safari-pinned-tab.svg', to: './safari-pinned-tab.svg' },
     { from: './public/web.config', to: './' },
     { from: './public/silent-renew.html', to: './' },
   ].filter(({ from }) => fs.existsSync(path.resolve(__dirname, from)));

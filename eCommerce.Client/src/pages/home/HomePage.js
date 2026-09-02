@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import useCart from '../../hooks/useCart';
+import usePageMeta from '../../hooks/usePageMeta';
 import useProducts from '../../hooks/useProducts';
 import { ROUTES } from '../../routes/routePaths';
 import { formatCurrency } from '../../utils/currency';
@@ -12,6 +13,15 @@ export default function HomePage() {
   const { addItem, items: cartItems } = useCart();
   const heroProduct = products[0];
   const sceneRef = useRef(null);
+
+  usePageMeta(
+    {
+      title: null, // uses default title
+      description: 'Fresh finds for your setup, your space, and your main-character era. Tech, home, and everything between.',
+      image: heroProduct?.imageUrl || undefined,
+    },
+    [heroProduct?.imageUrl],
+  );
 
   const moveScene = (event) => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || event.pointerType === 'touch') return;
