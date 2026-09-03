@@ -9,7 +9,12 @@ export const mapReview = (review) => ({
   author: review.userName ?? review.author ?? review.userEmail ?? review.user ?? 'Anonymous',
   rating: Number(review.rating ?? review.stars ?? 0),
   comment: review.comment ?? review.text ?? review.body ?? '',
+  title: review.title ?? '',
   createdAt: review.createdAt ?? review.createdOn ?? review.date ?? null,
+  userId: review.userId ?? review.userID ?? null,
+  isVerifiedPurchase: Boolean(review.isVerifiedPurchase ?? review.verifiedPurchase ?? false),
+  helpfulCount: Number(review.helpfulCount ?? review.helpful ?? 0),
+  notHelpfulCount: Number(review.notHelpfulCount ?? review.notHelpful ?? 0),
 });
 
 export async function getReviews(API, signal) {
@@ -35,5 +40,30 @@ export async function createReview(API, review) {
     title: review.title ?? '',
   };
   const { data } = await API.post(path(), payload);
+  return data;
+}
+
+export async function updateReview(API, reviewId, updates) {
+  const payload = {
+    reviewId,
+    rating: updates.rating,
+    comment: updates.comment,
+    title: updates.title ?? '',
+  };
+  const { data } = await API.put(`${path()}/${reviewId}`, payload);
+  return data;
+}
+
+export async function deleteReview(API, reviewId) {
+  await API.delete(`${path()}/${reviewId}`);
+}
+
+export async function markReviewHelpful(API, reviewId) {
+  const { data } = await API.post(`${path()}/${reviewId}/helpful`);
+  return data;
+}
+
+export async function markReviewNotHelpful(API, reviewId) {
+  const { data } = await API.post(`${path()}/${reviewId}/not-helpful`);
   return data;
 }

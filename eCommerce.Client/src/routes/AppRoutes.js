@@ -8,6 +8,7 @@ import AddProductPage from '../pages/admin/AddProductPage';
 import DeleteProductPage from '../pages/admin/DeleteProductPage';
 import AdminOrdersPage from '../pages/admin/AdminOrdersPage';
 import AdminProductsPage from '../pages/admin/AdminProductsPage';
+import AdminReviewsPage from '../pages/admin/AdminReviewsPage';
 import UpdateProductPage from '../pages/admin/UpdateProductPage';
 import LoginPage from '../pages/auth/LoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
@@ -38,7 +39,7 @@ export default function AppRoutes() {
       </Route>
     </Route>
     <Route element={<PublicRoute />}><Route path={ROUTES.login} element={<LoginPage />} /><Route path={ROUTES.register} element={<RegisterPage />} /></Route>
-    <Route element={<AdminRoute />}><Route path={ROUTES.admin} element={<AdminDashboardPage />} /><Route path={ROUTES.adminProducts} element={<AdminProductsPage />} /><Route path={ROUTES.adminAddProduct} element={<AddProductPage />} /><Route path={ROUTES.adminUpdateProduct} element={<UpdateProductPage />} /><Route path={ROUTES.adminDeleteProduct} element={<DeleteProductPage />} /><Route path={ROUTES.adminOrders} element={<AdminOrdersPage />} /></Route>
+    <Route element={<AdminRoute />}><Route path={ROUTES.admin} element={<AdminDashboardPage />} /><Route path={ROUTES.adminProducts} element={<AdminProductsPage />} /><Route path={ROUTES.adminAddProduct} element={<AddProductPage />} /><Route path={ROUTES.adminUpdateProduct} element={<UpdateProductPage />} /><Route path={ROUTES.adminDeleteProduct} element={<DeleteProductPage />} /><Route path={ROUTES.adminOrders} element={<AdminOrdersPage />} /><Route path={ROUTES.adminReviews} element={<AdminReviewsPage />} /></Route>
     <Route path={ROUTES.forbidden} element={<ForbiddenPage />} /><Route path="*" element={<NotFoundPage />} />
   </Routes>;
 }

@@ -1,11 +1,13 @@
 import { useCallback, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Button from '../../components/common/Button';
+import RatingBadge from '../../components/common/RatingBadge';
 import ShareButton from '../../components/common/ShareButton';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import ProductReviews from './ProductReviews';
 import WishlistButton from '../../components/WishlistButton';
 import useAsync from '../../hooks/useAsync';
+import useAuth from '../../hooks/useAuth';
 import useCart from '../../hooks/useCart';
 import useAxios from '../../hooks/useAxios';
 import usePageMeta from '../../hooks/usePageMeta';
@@ -18,6 +20,7 @@ export default function ProductDetailPage() {
   const API = useAxios();
   const { productId } = useParams();
   const { addItem, items } = useCart();
+  const { isAdmin } = useAuth();
   const [cartState, setCartState] = useState({ adding: false, error: '' });
   const loadProduct = useCallback((signal) => getProduct(API, productId, signal), [API, productId]);
   const { data, loading, error, reload } = useAsync(loadProduct, [loadProduct]);
@@ -65,6 +68,16 @@ export default function ProductDetailPage() {
         <h1>{product.name}</h1>
         {product.description && <p>{product.description}</p>}
         <p className="price">{formatCurrency(product.price, product.currency)}</p>
+        {(product.rating || product.ratingsCount || product.reviewCount) && (
+          <div className="product-detail__rating-summary">
+            <RatingBadge
+              value={product.rating}
+              ratingsCount={product.ratingsCount ?? product.reviewCount ?? 0}
+              reviewCount={product.reviewCount ?? 0}
+              size="lg"
+            />
+          </div>
+        )}
         <div className="product-detail__actions">
           {isInCart
             ? <Link className="button button--primary" to={ROUTES.cart}>Go to cart <span aria-hidden="true">→</span></Link>
@@ -81,7 +94,7 @@ export default function ProductDetailPage() {
         </div>
         {cartState.error && <p className="field-error" role="alert">{cartState.error}</p>}
       </div>
-      <ProductReviews product={product} />
+      <ProductReviews product={product} isAdmin={isAdmin} />
     </article>
   );
 }

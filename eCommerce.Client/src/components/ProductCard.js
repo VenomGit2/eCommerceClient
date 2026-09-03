@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../utils/currency';
 import { ROUTES } from '../routes/routePaths';
 import Button from './common/Button';
+import RatingBadge from './common/RatingBadge';
 import WishlistButton from './WishlistButton';
 
 export default function ProductCard({ product, onAdd, isInCart = false }) {
@@ -11,7 +12,18 @@ export default function ProductCard({ product, onAdd, isInCart = false }) {
   const [adding, setAdding] = useState(false);
   const [buying, setBuying] = useState(false);
   const [error, setError] = useState('');
-  const { id, name, imageUrl, price, currency, category, rating, discountPercentage } = product;
+  const {
+    id,
+    name,
+    imageUrl,
+    price,
+    currency,
+    category,
+    rating,
+    ratingsCount,
+    reviewCount,
+    discountPercentage,
+  } = product;
 
   useEffect(() => {
     if (!added) return undefined;
@@ -85,7 +97,14 @@ export default function ProductCard({ product, onAdd, isInCart = false }) {
         </div>
         <div className="product-card__meta">
           <strong>{formatCurrency(price, currency)}</strong>
-          {rating && <span aria-label={`Rated ${rating} out of 5`}><span aria-hidden="true">★</span> {rating}</span>}
+          {(rating || ratingsCount || reviewCount) && (
+            <RatingBadge
+              value={rating}
+              ratingsCount={ratingsCount ?? reviewCount ?? 0}
+              reviewCount={reviewCount ?? 0}
+              size="sm"
+            />
+          )}
         </div>
         <Button className="product-card__action product-card__buy-now" onClick={buyNow} disabled={id == null || buying}>
           {buying ? 'Opening checkout…' : <>Buy now <span aria-hidden="true">→</span></>}

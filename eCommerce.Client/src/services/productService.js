@@ -14,14 +14,35 @@ const resolveProductImageUrl = (product) => {
   );
 };
 
-export const mapProduct = (product) => ({
-  ...product,
-  id: product.productId,
-  name: product.productName,
-  price: product.unitPrice,
-  currency: 'INR',
-  imageUrl: resolveProductImageUrl(product),
-});
+const coerceCount = (value) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= 0 ? Math.floor(parsed) : 0;
+};
+
+export const mapProduct = (product) => {
+  const rating = Number(product.rating ?? product.averageRating ?? 0);
+  const reviewCount = coerceCount(
+    product.reviewCount ?? product.reviewsCount ?? product.numberOfReviews ?? product.review ?? 0,
+  );
+  const ratingsCount = coerceCount(
+    product.ratingsCount
+      ?? product.totalRatings
+      ?? product.numberOfRatings
+      ?? product.ratingCount
+      ?? reviewCount,
+  );
+  return {
+    ...product,
+    id: product.productId,
+    name: product.productName,
+    price: product.unitPrice,
+    currency: 'INR',
+    imageUrl: resolveProductImageUrl(product),
+    rating: Number.isFinite(rating) ? Math.max(0, Math.min(5, rating)) : 0,
+    reviewCount,
+    ratingsCount,
+  };
+};
 
 export async function getProducts(
   API,

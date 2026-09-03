@@ -3,5 +3,6 @@ export const ROUTES = {
   login: '/login', register: '/register', account: '/account', orders: '/account/orders',
   wishlist: '/account/wishlist', admin: '/admin', adminProducts: '/admin/products',
   adminAddProduct: '/admin/products/add', adminUpdateProduct: '/admin/products/update',
-  adminDeleteProduct: '/admin/products/delete', adminOrders: '/admin/orders', forbidden: '/forbidden',
+  adminDeleteProduct: '/admin/products/delete', adminOrders: '/admin/orders',
+  adminReviews: '/admin/reviews', forbidden: '/forbidden',
 };

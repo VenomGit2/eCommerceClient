@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+const SIZE_MAP = { sm: 14, md: 18, lg: 24 };
+
 function Star({ filled }) {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -14,21 +16,23 @@ export default function StarRating({
   max = 5,
   className = '',
   ariaLabel,
+  size = 'md',
 }) {
+  const starSize = SIZE_MAP[size] ?? SIZE_MAP.md;
   const [hovered, setHovered] = useState(0);
   const interactive = typeof onChange === 'function';
   const shown = interactive && hovered ? hovered : value;
 
   if (!interactive) {
     return (
-      <span className={`star-rating ${className}`.trim()} role="img" aria-label={ariaLabel || `Rated ${value} out of ${max}`}>
+      <span className={`star-rating ${className}`.trim()} role="img" aria-label={ariaLabel || `Rated ${value} out of ${max}`} style={{ '--star-size': `${starSize}px` }}>
         {Array.from({ length: max }, (_, index) => <Star key={index} filled={index < Math.round(value)} />)}
       </span>
     );
   }
 
   return (
-    <span className={`star-rating star-rating--input ${className}`.trim()} role="radiogroup" aria-label={ariaLabel || 'Choose a rating'}>
+    <span className={`star-rating star-rating--input ${className}`.trim()} role="radiogroup" aria-label={ariaLabel || 'Choose a rating'} style={{ '--star-size': `${starSize}px` }}>
       {Array.from({ length: max }, (_, index) => {
         const rating = index + 1;
         return (
