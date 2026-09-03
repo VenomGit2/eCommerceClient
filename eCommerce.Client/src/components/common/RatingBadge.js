@@ -16,6 +16,7 @@ export default function RatingBadge({
   reviewCount = 0,
   size = 'sm',
   showCounts = true,
+  compact = false,
   className = '',
   ariaLabel,
 }) {
@@ -42,7 +43,12 @@ export default function RatingBadge({
           </span>
         </span>
       )}
-      {showCountsValue && (
+      {showCountsValue && compact && (
+        <span className="rating-badge__counts rating-badge__counts--compact">
+          ({formatCount(reviewCount > 0 ? reviewCount : ratingsCount)})
+        </span>
+      )}
+      {showCountsValue && !compact && (
         <span className="rating-badge__counts">
           {ratingsCount > 0 && (
             <span className="rating-badge__count">{formatCount(ratingsCount)} Ratings</span>

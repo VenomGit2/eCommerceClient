@@ -103,6 +103,7 @@ export default function ProductCard({ product, onAdd, isInCart = false }) {
               ratingsCount={ratingsCount ?? reviewCount ?? 0}
               reviewCount={reviewCount ?? 0}
               size="sm"
+              compact
             />
           )}
         </div>
