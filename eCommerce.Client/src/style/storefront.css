@@ -913,19 +913,30 @@ tbody tr:hover { background: var(--off-white); }
 }
 .product-detail {
   display: grid;
-  grid-template-columns: minmax(280px, 420px) 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 2.5rem;
   align-items: start; /* required for sticky to work inside a grid */
+  width: 100%;
 }
 
 .product-detail__sticky {
   position: sticky;
   top: 1.5rem; /* adjust to sit below your fixed header height, if any */
   align-self: start;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.product-detail__sticky img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 .product-detail__scroll {
   min-width: 0; /* prevents grid blowout with long text/reviews */
+  max-width: 100%;
 }
 
 /* Sticky sidebar layout only makes sense on wider screens */

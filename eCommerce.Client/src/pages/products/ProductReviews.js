@@ -270,7 +270,7 @@ export default function ProductReviews({ product, currentUserId, isAdmin = false
       <div className="reviews-summary">
         <span className="reviews-summary__score">{reviewCount ? averageRating.toFixed(1) : '–'}</span>
         <StarRating value={averageRating} ariaLabel={reviewCount ? `Average rating ${averageRating} out of 5` : 'No ratings yet'} />
-        <span className="reviews-summary__count">{reviewCount ? `${reviewCount} review${reviewCount > 1 ? 's' : ''}` : 'No reviews yet'}</span>
+        <span className="reviews-summary__count">{reviewCount ? `${reviewCount} review${reviewCount > 1 ? 's' : ''}` : 'No ratings yet'}</span>
       </div>
 
       {reviewCount > 0 && (

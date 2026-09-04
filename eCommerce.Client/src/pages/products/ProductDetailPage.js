@@ -70,7 +70,7 @@ export default function ProductDetailPage() {
           <p className="eyebrow">Product</p>
           <h1>{product.name}</h1>
           <p className="price">{formatCurrency(product.price, product.currency)}</p>
-          {(product.rating || product.ratingsCount || product.reviewCount) && (
+        
             <div className="product-detail__rating-summary">
               <RatingBadge
                 value={product.rating}
@@ -79,7 +79,7 @@ export default function ProductDetailPage() {
                 size="lg"
               />
             </div>
-          )}
+     
           <div className="product-detail__actions">
             {isInCart
               ? <Link className="button button--primary" to={ROUTES.cart}>Go to cart <span aria-hidden="true">→</span></Link>

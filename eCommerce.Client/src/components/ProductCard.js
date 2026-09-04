@@ -97,7 +97,7 @@ export default function ProductCard({ product, onAdd, isInCart = false }) {
         </div>
         <div className="product-card__meta">
           <strong>{formatCurrency(price, currency)}</strong>
-          {(rating || ratingsCount || reviewCount) && (
+          
             <RatingBadge
               value={rating}
               ratingsCount={ratingsCount ?? reviewCount ?? 0}
@@ -105,7 +105,7 @@ export default function ProductCard({ product, onAdd, isInCart = false }) {
               size="sm"
               compact
             />
-          )}
+      
         </div>
         <Button className="product-card__action product-card__buy-now" onClick={buyNow} disabled={id == null || buying}>
           {buying ? 'Opening checkout…' : <>Buy now <span aria-hidden="true">→</span></>}
