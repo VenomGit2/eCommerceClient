@@ -6,6 +6,8 @@ import { ROUTES } from '../../routes/routePaths';
 import Button from '../../components/common/Button';
 import StarRating from '../../components/common/StarRating';
 
+const VISIBLE_REVIEW_LIMIT = 5;
+
 function formatDate(value) {
   if (!value) return '';
   const date = new Date(value);
@@ -161,6 +163,30 @@ function ReviewForm({ initialValues, onSubmit, onCancel, submitting, submitError
   );
 }
 
+function ReviewsModal({ title, reviews, onClose, renderReview }) {
+  return (
+    <div className="reviews-modal-overlay" role="presentation" onClick={onClose}>
+      <div
+        className="reviews-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="reviews-modal__header">
+          <p className="reviews-modal__title">{title}</p>
+          <button type="button" className="reviews-modal__close" onClick={onClose} aria-label="Close">
+            ×
+          </button>
+        </div>
+        <ul className="review-list reviews-modal__list">
+          {reviews.map((review) => renderReview(review))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
 export default function ProductReviews({ product, currentUserId, isAdmin = false }) {
   const { isAuthenticated, session } = useAuth();
   const location = useLocation();
@@ -172,12 +198,15 @@ export default function ProductReviews({ product, currentUserId, isAdmin = false
   const [filterRating, setFilterRating] = useState(0);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [showAllModal, setShowAllModal] = useState(false);
 
   const userId = currentUserId ?? session?.sub ?? session?.user?.sub ?? null;
   const sortedReviews = sortReviews(reviews, sortBy);
   const filteredReviews = filterRating > 0
     ? sortedReviews.filter((r) => Math.round(r.rating) === filterRating)
     : sortedReviews;
+  const visibleReviews = filteredReviews.slice(0, VISIBLE_REVIEW_LIMIT);
+  const remainingReviews = filteredReviews.slice(VISIBLE_REVIEW_LIMIT);
   const loginReturnTo = `${location.pathname}${location.search}${location.hash}`;
 
   const handleEdit = (reviewId) => setEditingReviewId(reviewId);
@@ -202,6 +231,37 @@ export default function ProductReviews({ product, currentUserId, isAdmin = false
 
   const handleVote = async (reviewId, isHelpful) => {
     await voteHelpful(reviewId, isHelpful);
+  };
+
+  const renderReview = (review) => {
+    const isOwner = userId && (String(review.userId) === String(userId) || review.author === userId);
+    if (editingReviewId === review.id) {
+      return (
+        <li className="review review--editing" key={review.id}>
+          <ReviewForm
+            initialValues={{ rating: review.rating, title: review.title, comment: review.comment }}
+            onSubmit={handleEditSubmit}
+            onCancel={handleEditCancel}
+            submitting={submitting}
+            submitError={submitError}
+            isEditing
+          />
+        </li>
+      );
+    }
+    return (
+      <ReviewItem
+        key={review.id}
+        review={review}
+        isOwner={isOwner}
+        isAdmin={isAdmin}
+        onEdit={() => handleEdit(review.id)}
+        onDelete={() => handleDelete(review.id)}
+        onVoteHelpful={() => handleVote(review.id, true)}
+        onVoteNotHelpful={() => handleVote(review.id, false)}
+        voting={submitting}
+      />
+    );
   };
 
   return (
@@ -253,39 +313,18 @@ export default function ProductReviews({ product, currentUserId, isAdmin = false
       {loading && <p className="reviews-status">Loading reviews…</p>}
       {error && <p className="field-error" role="alert">Could not load reviews. Please try again later.</p>}
 
-      {!loading && !error && filteredReviews.length > 0 && (
+      {!loading && !error && visibleReviews.length > 0 && (
         <ul className="review-list">
-          {filteredReviews.map((review) => {
-            const isOwner = userId && (String(review.userId) === String(userId) || review.author === userId);
-            if (editingReviewId === review.id) {
-              return (
-                <li className="review review--editing" key={review.id}>
-                  <ReviewForm
-                    initialValues={{ rating: review.rating, title: review.title, comment: review.comment }}
-                    onSubmit={handleEditSubmit}
-                    onCancel={handleEditCancel}
-                    submitting={submitting}
-                    submitError={submitError}
-                    isEditing
-                  />
-                </li>
-              );
-            }
-            return (
-              <ReviewItem
-                key={review.id}
-                review={review}
-                isOwner={isOwner}
-                isAdmin={isAdmin}
-                onEdit={() => handleEdit(review.id)}
-                onDelete={() => handleDelete(review.id)}
-                onVoteHelpful={() => handleVote(review.id, true)}
-                onVoteNotHelpful={() => handleVote(review.id, false)}
-                voting={submitting}
-              />
-            );
-          })}
+          {visibleReviews.map((review) => renderReview(review))}
         </ul>
+      )}
+
+      {!loading && !error && remainingReviews.length > 0 && (
+        <div className="reviews-load-more">
+          <Button variant="ghost" onClick={() => setShowAllModal(true)}>
+            Load more reviews ({remainingReviews.length})
+          </Button>
+        </div>
       )}
 
       {!loading && !error && reviews.length === 0 && (
@@ -303,6 +342,15 @@ export default function ProductReviews({ product, currentUserId, isAdmin = false
             </Button>
           </div>
         </div>
+      )}
+
+      {showAllModal && (
+        <ReviewsModal
+          title={`All reviews (${filteredReviews.length})`}
+          reviews={remainingReviews}
+          onClose={() => setShowAllModal(false)}
+          renderReview={renderReview}
+        />
       )}
 
       <div className="review-form-wrapper">

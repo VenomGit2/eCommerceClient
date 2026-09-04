@@ -4,6 +4,7 @@ import Button from '../../components/common/Button';
 import RatingBadge from '../../components/common/RatingBadge';
 import ShareButton from '../../components/common/ShareButton';
 import ErrorMessage from '../../components/common/ErrorMessage';
+import ProductHighlights from '../../components/ProductHighlights';
 import ProductDescription from '../../components/ProductDescription';
 import ProductReviews from './ProductReviews';
 import WishlistButton from '../../components/WishlistButton';
@@ -16,7 +17,6 @@ import { ROUTES } from '../../routes/routePaths';
 import { getProduct } from '../../services/productService';
 import { getEntity } from '../../utils/apiResponse';
 import { formatCurrency } from '../../utils/currency';
-import ProductHighlights from '../../components/ProductHighlights';
 
 export default function ProductDetailPage() {
   const API = useAxios();
@@ -62,44 +62,47 @@ export default function ProductDetailPage() {
 
   return (
     <article className="product-detail">
-      {product.imageUrl
-        ? <img src={product.imageUrl} alt={product.name || 'Product'} />
-        : <div className="product-detail__placeholder" aria-hidden="true">{product.name?.charAt(0)}</div>}
-      <div>
-        <p className="eyebrow">Product</p>
-        <h1>{product.name}</h1>
-        {product.description && <p className="product-detail__tagline">{product.description}</p>}
-        <p className="price">{formatCurrency(product.price, product.currency)}</p>
-        {(product.rating || product.ratingsCount || product.reviewCount) && (
-          <div className="product-detail__rating-summary">
-            <RatingBadge
-              value={product.rating}
-              ratingsCount={product.ratingsCount ?? product.reviewCount ?? 0}
-              reviewCount={product.reviewCount ?? 0}
-              size="lg"
+      <div className="product-detail__sticky">
+        {product.imageUrl
+          ? <img src={product.imageUrl} alt={product.name || 'Product'} />
+          : <div className="product-detail__placeholder" aria-hidden="true">{product.name?.charAt(0)}</div>}
+        <div>
+          <p className="eyebrow">Product</p>
+          <h1>{product.name}</h1>
+          <p className="price">{formatCurrency(product.price, product.currency)}</p>
+          {(product.rating || product.ratingsCount || product.reviewCount) && (
+            <div className="product-detail__rating-summary">
+              <RatingBadge
+                value={product.rating}
+                ratingsCount={product.ratingsCount ?? product.reviewCount ?? 0}
+                reviewCount={product.reviewCount ?? 0}
+                size="lg"
+              />
+            </div>
+          )}
+          <div className="product-detail__actions">
+            {isInCart
+              ? <Link className="button button--primary" to={ROUTES.cart}>Go to cart <span aria-hidden="true">→</span></Link>
+              : <Button onClick={addToCart} disabled={product.id == null || cartState.adding} aria-live="polite">{cartState.adding ? 'Adding…' : 'Add to cart'}</Button>}
+            <ShareButton
+              title={product.name || 'Product'}
+              text={product.description ? `Check out ${product.name} at Circuit & Grain: ${product.description}` : `Check out ${product.name} at Circuit & Grain.`}
+              label="Share product"
+              dialogTitle="Share this product"
+              className="product-detail__share"
+              aria-label={`Share ${product.name || 'this product'}`}
             />
+            <WishlistButton product={product} className="product-detail__wishlist" />
           </div>
-        )}
-        <div className="product-detail__actions">
-          {isInCart
-            ? <Link className="button button--primary" to={ROUTES.cart}>Go to cart <span aria-hidden="true">→</span></Link>
-            : <Button onClick={addToCart} disabled={product.id == null || cartState.adding} aria-live="polite">{cartState.adding ? 'Adding…' : 'Add to cart'}</Button>}
-          <ShareButton
-            title={product.name || 'Product'}
-            text={product.description ? `Check out ${product.name} at Circuit & Grain: ${product.description}` : `Check out ${product.name} at Circuit & Grain.`}
-            label="Share product"
-            dialogTitle="Share this product"
-            className="product-detail__share"
-            aria-label={`Share ${product.name || 'this product'}`}
-          />
-          <WishlistButton product={product} className="product-detail__wishlist" />
+          {cartState.error && <p className="field-error" role="alert">{cartState.error}</p>}
         </div>
-        {cartState.error && <p className="field-error" role="alert">{cartState.error}</p>}
-        {cartState.error && <p className="field-error" role="alert">{cartState.error}</p>}
-<ProductHighlights text={product.description} />
       </div>
-      <ProductDescription text={product.description} />
-      <ProductReviews product={product} isAdmin={isAdmin} />
+
+      <div className="product-detail__scroll">
+        <ProductHighlights text={product.description} />
+        <ProductDescription text={product.description} />
+        <ProductReviews product={product} isAdmin={isAdmin} />
+      </div>
     </article>
   );
 }
