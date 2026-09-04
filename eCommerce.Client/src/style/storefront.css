@@ -827,3 +827,15 @@ tbody tr:hover { background: var(--off-white); }
   color: #333;
 }
 .product-description__bullets li { margin-bottom: 0.35rem; }
+.product-id-lookup {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.product-id-lookup__status {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.1rem;
+}
+.product-id-lookup__status--found { color: #1a7f37; font-weight: 600; }
+.product-id-lookup__status--missing { color: #c0392b; }
