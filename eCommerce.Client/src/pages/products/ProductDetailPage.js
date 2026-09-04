@@ -16,6 +16,7 @@ import { ROUTES } from '../../routes/routePaths';
 import { getProduct } from '../../services/productService';
 import { getEntity } from '../../utils/apiResponse';
 import { formatCurrency } from '../../utils/currency';
+import ProductHighlights from '../../components/ProductHighlights';
 
 export default function ProductDetailPage() {
   const API = useAxios();
@@ -94,6 +95,8 @@ export default function ProductDetailPage() {
           <WishlistButton product={product} className="product-detail__wishlist" />
         </div>
         {cartState.error && <p className="field-error" role="alert">{cartState.error}</p>}
+        {cartState.error && <p className="field-error" role="alert">{cartState.error}</p>}
+<ProductHighlights text={product.description} />
       </div>
       <ProductDescription text={product.description} />
       <ProductReviews product={product} isAdmin={isAdmin} />

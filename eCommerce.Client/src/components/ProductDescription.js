@@ -1,6 +1,6 @@
-const SUBHEADING_PATTERN = /^[A-Z][A-Za-z0-9 &]{1,30}:$/;
+export const SUBHEADING_PATTERN = /^[A-Z][A-Za-z0-9 &]{1,30}:$/;
 
-function parseDescription(text) {
+export function parseDescription(text) {
   const blocks = text.trim().split(/\n\s*\n/);
   const sections = [];
   let current = { heading: null, paragraphs: [], bullets: [] };
