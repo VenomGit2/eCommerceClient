@@ -16,6 +16,17 @@ export default function ProductFormFields({ product, setProduct, includeProductI
       </div>
       <Input label="Unit price" type="number" min="0" step="0.01" required value={product.unitPrice} onChange={updateField('unitPrice')} />
       <Input label="Quantity in stock" type="number" min="0" step="1" required value={product.quantityInStock} onChange={updateField('quantityInStock')} />
+      <div className="field">
+        <label htmlFor="product-description">Description</label>
+        <textarea
+          id="product-description"
+          rows={8}
+          placeholder={'Write in plain paragraphs.\n\nStart a new line for a new paragraph.\nLines starting with "- " become bullet points.'}
+          value={product.description ?? ''}
+          onChange={updateField('description')}
+        />
+        <p className="field__help">Use blank lines for new paragraphs and "- " at the start of a line for bullet points. This will be formatted automatically on the product page.</p>
+      </div>
     </>
   );
 }

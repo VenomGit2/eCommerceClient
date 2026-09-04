@@ -6,7 +6,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 import { createProduct } from '../../services/productService';
 import useAxios from '../../hooks/useAxios';
 
-const initialProduct = { productName: '', category: 'Other', unitPrice: '', quantityInStock: '' };
+const initialProduct = { productName: '', category: 'Other', unitPrice: '', quantityInStock: '', description: '' };
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 

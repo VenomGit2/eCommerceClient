@@ -4,6 +4,7 @@ import Button from '../../components/common/Button';
 import RatingBadge from '../../components/common/RatingBadge';
 import ShareButton from '../../components/common/ShareButton';
 import ErrorMessage from '../../components/common/ErrorMessage';
+import ProductDescription from '../../components/ProductDescription';
 import ProductReviews from './ProductReviews';
 import WishlistButton from '../../components/WishlistButton';
 import useAsync from '../../hooks/useAsync';
@@ -66,7 +67,7 @@ export default function ProductDetailPage() {
       <div>
         <p className="eyebrow">Product</p>
         <h1>{product.name}</h1>
-        {product.description && <p>{product.description}</p>}
+        {product.description && <p className="product-detail__tagline">{product.description}</p>}
         <p className="price">{formatCurrency(product.price, product.currency)}</p>
         {(product.rating || product.ratingsCount || product.reviewCount) && (
           <div className="product-detail__rating-summary">
@@ -94,6 +95,7 @@ export default function ProductDetailPage() {
         </div>
         {cartState.error && <p className="field-error" role="alert">{cartState.error}</p>}
       </div>
+      <ProductDescription text={product.description} />
       <ProductReviews product={product} isAdmin={isAdmin} />
     </article>
   );

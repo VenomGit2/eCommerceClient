@@ -55,15 +55,18 @@ export async function createProduct(API, product, image) {
   formData.append('category', product.category);
   formData.append('unitPrice', String(product.unitPrice));
   formData.append('quantityInStock', String(product.quantityInStock));
+  formData.append('description', product.description ?? '');
   formData.append('image', image);
 
   const { data } = await API.post(operationPath('REACT_APP_PRODUCT_ADD_PATH'), formData, productConfig());
   return data;
 }
+
 export async function updateProduct(API, id, product) {
   const { data } = await API.post(operationPath('REACT_APP_PRODUCT_UPDATE_PATH'), { ...product, productId: id }, productConfig());
   return data;
 }
+
 export async function deleteProduct(API, id) {
   const { data } = await API.post(`${operationPath('REACT_APP_PRODUCT_DELETE_PATH')}/${encodeURIComponent(id)}`, null, productConfig());
   return data;

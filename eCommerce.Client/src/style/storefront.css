@@ -786,3 +786,44 @@ tbody tr:hover { background: var(--off-white); }
 @media (prefers-reduced-motion: reduce) {
   .order-card,.order-detail__image img { transition: none; }
 }
+.product-detail__tagline {
+  font-size: 0.95rem;
+  color: #555;
+  margin: 0.5rem 0 1rem;
+  line-height: 1.5;
+}
+
+.product-description {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e5e5;
+}
+.product-description__title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+.product-description__section { margin-bottom: 1.5rem; }
+.product-description__heading {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.product-description__paragraph {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+.product-description__bullets {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #333;
+}
+.product-description__bullets li { margin-bottom: 0.35rem; }
