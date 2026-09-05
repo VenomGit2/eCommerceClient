@@ -353,24 +353,16 @@ export default function ProductReviews({ product, currentUserId, isAdmin = false
         />
       )}
 
-      <div className="review-form-wrapper">
-        {isAuthenticated ? (
-          !editingReviewId && (
-            <ReviewForm
-              onSubmit={addReview}
-              submitting={submitting}
-              submitError={submitError}
-              isEditing={false}
-            />
-          )
-        ) : (
-          <p className="reviews-login-hint">
-            <Link className="button button--ghost" to={`${ROUTES.login}?reason=login-required&returnTo=${encodeURIComponent(loginReturnTo)}`}>
-              Sign in to write a review
-            </Link>
-          </p>
-        )}
-      </div>
+        {isAuthenticated && !editingReviewId && (
+        <div className="review-form-wrapper">
+          <ReviewForm
+            onSubmit={addReview}
+            submitting={submitting}
+            submitError={submitError}
+            isEditing={false}
+          />
+        </div>
+      )}
     </section>
   );
 }

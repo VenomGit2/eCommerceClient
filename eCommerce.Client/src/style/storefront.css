@@ -1066,3 +1066,47 @@ main.page-container:has(.product-detail) {
 }
 .search-modal__item-placeholder { align-items: center; display: flex; font-weight: 700; justify-content: center; }
 .search-modal__item-name { font-size: .85rem; font-weight: 600; }
+
+/* ---- Fix: product description/highlights text hardcoded colors ---- */
+.product-detail__tagline { color: var(--mid-grey); }
+.product-description__paragraph,
+.product-description__bullets,
+.product-highlights__item { color: var(--black); }
+.product-highlights__item strong { color: var(--black); }
+.product-highlights__dot { background: var(--mid-grey); }
+
+:root[data-theme='dark'] .product-detail__tagline { color: #a8b1a4; }
+:root[data-theme='dark'] .product-description__paragraph,
+:root[data-theme='dark'] .product-description__bullets,
+:root[data-theme='dark'] .product-highlights__item,
+:root[data-theme='dark'] .product-highlights__item strong { color: #f4f5f1; }
+:root[data-theme='dark'] .product-highlights__dot { background: #a8b1a4; }
+
+/* ---- Fix: review-related ghost buttons need visible border + proper hover in both modes ---- */
+.review-form-wrapper .button--ghost,
+.review-confirm-dialog .button--ghost,
+.reviews-load-more .button--ghost {
+  border-color: var(--line);
+  color: var(--black);
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+.review-form-wrapper .button--ghost:hover:not(:disabled),
+.review-confirm-dialog .button--ghost:hover:not(:disabled),
+.reviews-load-more .button--ghost:hover:not(:disabled) {
+  background: var(--black);
+  border-color: var(--black);
+  color: var(--white);
+}
+
+:root[data-theme='dark'] .review-form-wrapper .button--ghost,
+:root[data-theme='dark'] .review-confirm-dialog .button--ghost,
+:root[data-theme='dark'] .reviews-load-more .button--ghost {
+  color: #f4f5f1;
+}
+:root[data-theme='dark'] .review-form-wrapper .button--ghost:hover:not(:disabled),
+:root[data-theme='dark'] .review-confirm-dialog .button--ghost:hover:not(:disabled),
+:root[data-theme='dark'] .reviews-load-more .button--ghost:hover:not(:disabled) {
+  background: var(--lime);
+  border-color: var(--lime);
+  color: #0a0a0a;
+}
