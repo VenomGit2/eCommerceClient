@@ -796,7 +796,7 @@ tbody tr:hover { background: var(--off-white); }
 .product-description {
   margin-top: 2.5rem;
   padding-top: 2rem;
-  border-top: 1px solid #e5e5e5;
+  /* border-top: 1px solid #e5e5e5; */
 }
 .product-description__title {
   font-size: 0.75rem;
@@ -930,8 +930,12 @@ tbody tr:hover { background: var(--off-white); }
 
 .product-detail__sticky img {
   max-width: 100%;
+  max-height: 60vh;   /* caps the image so the buy box below it stays visible */
+  width: auto;
   height: auto;
+  object-fit: contain;
   display: block;
+  margin: 0 auto;      /* optional: centers it if it's now narrower than the column */
 }
 
 .product-detail__scroll {

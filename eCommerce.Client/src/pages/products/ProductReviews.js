@@ -131,7 +131,7 @@ function ReviewForm({ initialValues, onSubmit, onCancel, submitting, submitError
     <form className="review-form" onSubmit={handleSubmit} noValidate>
       <p className="review-form__title">{isEditing ? 'Edit your review' : 'Write a review'}</p>
       <StarRating value={rating} onChange={setRating} ariaLabel="Your rating" />
-      <input
+      {/* <input
         type="text"
         className="review-form__title-input"
         value={title}
@@ -139,7 +139,7 @@ function ReviewForm({ initialValues, onSubmit, onCancel, submitting, submitError
         placeholder="Summarize your experience (optional)"
         aria-label="Review title"
         maxLength={100}
-      />
+      /> */}
       <textarea
         className="review-form__comment"
         value={comment}
