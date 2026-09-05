@@ -919,6 +919,10 @@ tbody tr:hover { background: var(--off-white); }
   width: 100%;
 }
 
+main.page-container:has(.product-detail) {
+  padding-top: 16px; /* or whatever feels right, e.g. 24px */
+}
+
 .product-detail__sticky {
   position: sticky;
   top: 1.5rem; /* adjust to sit below your fixed header height, if any */
