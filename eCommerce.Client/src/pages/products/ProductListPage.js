@@ -1,23 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard';
 import EmptyState from '../../components/common/EmptyState';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import LoadMoreButton from '../../components/pagination/LoadMoreButton';
 import useCart from '../../hooks/useCart';
 import usePageMeta from '../../hooks/usePageMeta';
-import useProductSearch from '../../hooks/useProductSearch';
 import useProducts from '../../hooks/useProducts';
 import { PRODUCT_CATEGORIES, formatCategoryLabel } from '../../utils/productCategories';
 
 export default function ProductListPage() {
   const { addItem, items: cartItems } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const query = searchParams.get('q') || '';
   const selectedCategory = searchParams.get('category') || '';
-  const [searchTerm, setSearchTerm] = useState(query);
 
   const {
     products,
@@ -29,14 +24,6 @@ export default function ProductListPage() {
     reload,
     loadMore,
   } = useProducts({ category: selectedCategory });
-  const {
-    product: searchedProduct,
-    loading: searchLoading,
-    error: searchError,
-    hasSearched,
-    search,
-    clear: clearSearch,
-  } = useProductSearch();
 
   usePageMeta(
     {
@@ -47,41 +34,10 @@ export default function ProductListPage() {
     [totalItems],
   );
 
-  useEffect(() => {
-    setSearchTerm(query);
-    if (query) {
-      search(query);
-    } else {
-      clearSearch();
-    }
-  }, [clearSearch, query, search]);
-
-  useEffect(() => {
-    if (!location.state?.focusProductSearch) return;
-    document.getElementById('product-id-search')?.focus();
-    navigate(location.pathname, { replace: true, state: null });
-  }, [location.pathname, location.state, navigate]);
-
   const cartProductIds = useMemo(
     () => new Set(cartItems.map((item) => String(item.id))),
     [cartItems],
   );
-  const displayedProducts = hasSearched
-    ? (searchedProduct ? [searchedProduct] : [])
-    : products;
-  const hasActiveFilter = hasSearched || Boolean(selectedCategory);
-
-  const submitSearch = (event) => {
-    event.preventDefault();
-    const productId = searchTerm.trim();
-    if (!productId) return;
-
-    if (productId === query) {
-      search(productId);
-    } else {
-      setSearchParams({ q: productId });
-    }
-  };
 
   const selectCategory = (event) => {
     const category = event.target.value;
@@ -96,20 +52,16 @@ export default function ProductListPage() {
   if (error && !products.length) return <ErrorMessage message={error.message} onRetry={reload} />;
 
   let results;
-  if (searchLoading) {
-    results = null;
-  } else if (searchError) {
-    results = <ErrorMessage message={searchError.message} onRetry={() => search(searchTerm)} />;
-  } else if (!displayedProducts.length) {
+  if (!products.length) {
     const message = selectedCategory
       ? `There are no products in ${formatCategoryLabel(selectedCategory)}.`
-      : 'Check the product ID and try again.';
+      : 'Check back soon for new arrivals.';
     results = <EmptyState title="No products found" message={message} />;
   } else {
     results = (
       <>
         <div className="product-grid">
-          {displayedProducts.map((product) => (
+          {products.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
@@ -119,7 +71,7 @@ export default function ProductListPage() {
           ))}
         </div>
         {error && <ErrorMessage message={error.message} onRetry={loadMore} />}
-        {!hasSearched && hasMore && (
+        {hasMore && (
           <LoadMoreButton loading={loadingMore} onClick={loadMore} loadingLabel="Loading more products...">
             Load more products
           </LoadMoreButton>
@@ -136,26 +88,6 @@ export default function ProductListPage() {
           <h1>Shop all</h1>
           <p>{totalItems} products selected for better everyday living.</p>
         </div>
-        <form className="catalog-search" role="search" onSubmit={submitSearch}>
-          <label className="sr-only" htmlFor="product-id-search">Search by product ID</label>
-          <input
-            id="product-id-search"
-            type="search"
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Enter product ID"
-          />
-          <button
-            type="submit"
-            aria-label="Search products"
-            disabled={!searchTerm.trim() || searchLoading}
-          >
-            <svg aria-hidden="true" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="7" />
-              <path d="m20 20-4-4" />
-            </svg>
-          </button>
-        </form>
       </div>
 
       <div className="catalog-toolbar">
@@ -165,7 +97,6 @@ export default function ProductListPage() {
             id="product-category-filter"
             value={selectedCategory}
             onChange={selectCategory}
-            disabled={searchLoading}
           >
             <option value="">All products</option>
             {PRODUCT_CATEGORIES.map((category) => (
@@ -174,11 +105,9 @@ export default function ProductListPage() {
           </select>
         </div>
         <span aria-live="polite">
-          {searchLoading
-            ? 'Searching products...'
-            : `Showing ${displayedProducts.length} of ${hasSearched ? displayedProducts.length : totalItems} products`}
+          Showing {products.length} of {totalItems} products
         </span>
-        {hasActiveFilter && <button type="button" onClick={clearFilters}>Clear filters</button>}
+        {selectedCategory && <button type="button" onClick={clearFilters}>Clear filters</button>}
       </div>
 
       {results}

@@ -97,8 +97,22 @@ export default function UpdateProductPage() {
             disabled={lookup.status === 'found'}
             required
           />
-          <Button type="button" onClick={checkProduct} disabled={lookup.status === 'checking' || lookup.status === 'found'}>
-            {lookup.status === 'checking' ? 'Checking…' : 'Check'}
+          <Button
+            type="button"
+            variant="ghost"
+            className="product-id-lookup__check"
+            onClick={checkProduct}
+            disabled={lookup.status === 'checking' || lookup.status === 'found'}
+            aria-label={lookup.status === 'checking' ? 'Checking product' : 'Check product'}
+          >
+            {lookup.status === 'checking'
+              ? <span className="wishlist-button__spinner" aria-hidden="true" />
+              : (
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+              )}
           </Button>
           {lookup.status === 'found' && <span className="product-id-lookup__status product-id-lookup__status--found">{lookup.message}</span>}
           {lookup.status === 'not-found' && <span className="product-id-lookup__status product-id-lookup__status--missing">{lookup.message}</span>}

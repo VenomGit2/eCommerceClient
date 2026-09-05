@@ -101,7 +101,7 @@ export default function ProductDetailPage() {
       <div className="product-detail__scroll">
         {/* <ProductHighlights text={product.description} /> */}
         <ProductDescription text={product.description} />
-        <ProductReviews product={product} isAdmin={isAdmin} />
+        <ProductReviews product={product} isAdmin={isAdmin} onReviewsChanged={reload} />
       </div>
     </article>
   );

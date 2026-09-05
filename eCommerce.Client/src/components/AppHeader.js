@@ -5,7 +5,7 @@ import useCart from '../hooks/useCart';
 import useWishlist from '../hooks/useWishlist';
 import { ROUTES } from '../routes/routePaths';
 import ModuleAccess from '../utils/moduleAccess';
-import PageHelp from './common/PageHelp';
+import SearchModal from './SearchModal';
 import ThemeToggle from './common/ThemeToggle';
 
 function SearchIcon() { return <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>; }
@@ -20,6 +20,7 @@ function SignOutIcon() { return <svg aria-hidden="true" viewBox="0 0 24 24"><pat
 
 export default function AppHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
   const { isAuthenticated, session, logout } = useAuth();
   const { itemCount } = useCart();
@@ -34,6 +35,19 @@ export default function AppHeader() {
     window.addEventListener('keydown', closeOnEscape);
     return () => window.removeEventListener('keydown', closeOnEscape);
   }, []);
+
+  useEffect(() => {
+    if (hasAdminAccess) return undefined;
+    const onKeyDown = (event) => {
+      const isShortcut = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k';
+      if (isShortcut) {
+        event.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [hasAdminAccess]);
 
   return <>
     {!hasAdminAccess && <div className="announcement-bar">FREE SHIPPING ON EVERYDAY ESSENTIALS <span>—</span> SHOP THE LATEST DROP</div>}
@@ -55,8 +69,12 @@ export default function AppHeader() {
         </Link>
         <div className="nav__utilities">
           <ThemeToggle />
-          <PageHelp />
-          {!hasAdminAccess && <Link to={ROUTES.products} aria-label="Search products"><SearchIcon /></Link>}
+          {!hasAdminAccess && (
+            <button type="button" className="nav__search-trigger" onClick={() => setSearchOpen(true)} aria-label="Search products (Command K)">
+              <SearchIcon />
+              <span className="nav__search-trigger-kbd">⌘K</span>
+            </button>
+          )}
           {!hasAdminAccess && <Link className="wishlist-link" to={ROUTES.wishlist} aria-label={`Wishlist with ${wishlistCount} items`} title="Wishlist"><HeartIcon />{isAuthenticated && wishlistCount > 0 && <span className="nav-icon__count">{wishlistCount}</span>}</Link>}
           {!hasAdminAccess && <Link to={isAuthenticated ? ROUTES.account : ROUTES.login} aria-label={isAuthenticated ? 'My account' : 'Sign in'}><UserIcon /></Link>}
           {!hasAdminAccess && <Link className="cart-link" to={ROUTES.cart} aria-label={`Cart with ${itemCount} items`}><CartIcon /><span className="cart-link__count">{itemCount}</span></Link>}
@@ -64,5 +82,6 @@ export default function AppHeader() {
       </nav>
       {menuOpen && <button className="mobile-menu-backdrop" type="button" aria-label="Close navigation" onClick={closeMenu} />}
     </header>
+    {!hasAdminAccess && <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />}
   </>;
 }

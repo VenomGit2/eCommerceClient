@@ -11,7 +11,7 @@ import {
   updateReview,
 } from '../services/reviewService';
 
-export default function useProductReviews(productId) {
+export default function useProductReviews(productId, onChanged) {
   const API = useAxios();
   const { isAuthenticated } = useAuth();
   const [submitState, setSubmitState] = useState({ submitting: false, submitError: '' });
@@ -51,6 +51,7 @@ export default function useProductReviews(productId) {
     try {
       await createReview(API, { productId, rating, comment, title });
       reload();
+      onChanged?.();
       setSubmitState({ submitting: false, submitError: '' });
       return true;
     } catch (requestError) {
@@ -65,6 +66,7 @@ export default function useProductReviews(productId) {
     try {
       await updateReview(API, reviewId, { rating, comment, title });
       reload();
+      onChanged?.();
       setSubmitState({ submitting: false, submitError: '' });
       return true;
     } catch (requestError) {
@@ -79,6 +81,7 @@ export default function useProductReviews(productId) {
     try {
       await deleteReview(API, reviewId);
       reload();
+      onChanged?.();
       setSubmitState({ submitting: false, submitError: '' });
       return true;
     } catch (requestError) {

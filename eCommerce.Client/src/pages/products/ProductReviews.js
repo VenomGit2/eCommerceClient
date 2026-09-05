@@ -187,13 +187,13 @@ function ReviewsModal({ title, reviews, onClose, renderReview }) {
   );
 }
 
-export default function ProductReviews({ product, currentUserId, isAdmin = false }) {
+export default function ProductReviews({ product, currentUserId, isAdmin = false, onReviewsChanged }) {
   const { isAuthenticated, session } = useAuth();
   const location = useLocation();
   const {
     reviews, loading, error, averageRating, reviewCount, ratingDistribution,
     addReview, editReview, removeReview, voteHelpful, submitting, submitError,
-  } = useProductReviews(product?.id);
+  } = useProductReviews(product?.id, onReviewsChanged);
   const [sortBy, setSortBy] = useState('newest');
   const [filterRating, setFilterRating] = useState(0);
   const [editingReviewId, setEditingReviewId] = useState(null);
