@@ -99,7 +99,7 @@ export default function ProductDetailPage() {
       </div>
 
       <div className="product-detail__scroll">
-        <ProductHighlights text={product.description} />
+        {/* <ProductHighlights text={product.description} /> */}
         <ProductDescription text={product.description} />
         <ProductReviews product={product} isAdmin={isAdmin} />
       </div>
