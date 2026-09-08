@@ -66,7 +66,7 @@ export default function SearchModal({ open, onClose }) {
             className="search-modal__input"
             value={term}
             onChange={(event) => setTerm(event.target.value)}
-            placeholder="Enter product ID"
+            placeholder="search it up"
             aria-label="Product ID"
           />
           <button type="button" className="search-modal__close" onClick={onClose} aria-label="Close search">
@@ -75,7 +75,7 @@ export default function SearchModal({ open, onClose }) {
         </form>
 
         {loading && <p className="search-modal__status">Searching…</p>}
-        {error && !loading && <p className="search-modal__status search-modal__status--error">No product found with this ID.</p>}
+        {error && !loading &&  <p className="search-modal__status search-modal__status--muted">No product found</p>}
 
         {!loading && recentSearches.length > 0 && (
           <div className="search-modal__section">
@@ -98,11 +98,11 @@ export default function SearchModal({ open, onClose }) {
           </div>
         )}
 
-        {!loading && recentSearches.length === 0 && !error && (
+        {/* {!loading && recentSearches.length === 0 && !error && (
           <p className="search-modal__status search-modal__status--muted">
             Type a product ID and press Enter to jump straight to it.
           </p>
-        )}
+        )} */}
       </div>
     </div>
   );

@@ -16,9 +16,13 @@ export default function useProductSearch() {
     setState({ product: null, loading: true, error: null, hasSearched: true });
 
     try {
+      debugger
       const product = await getProduct(API, normalizedProductId, controllerRef.current.signal);
       setState({ product, loading: false, error: null, hasSearched: true });
-      return product;
+    
+      if(product == null)
+        setState({ product: null, loading: false,error, hasSearched: true });
+        return product;
     } catch (error) {
       if (error.name !== 'AbortError') setState({ product: null, loading: false, error, hasSearched: true });
       return null;
