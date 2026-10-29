@@ -5,4 +5,5 @@ export const ROUTES = {
   adminAddProduct: '/admin/products/add', adminUpdateProduct: '/admin/products/update',
   adminDeleteProduct: '/admin/products/delete', adminOrders: '/admin/orders',
   adminReviews: '/admin/reviews', forbidden: '/forbidden',
+  privacyPolicy: '/privacy-policy'
 };

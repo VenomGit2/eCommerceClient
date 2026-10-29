@@ -18,6 +18,7 @@ import CheckoutSuccessPage from '../pages/checkout/CheckoutSuccessPage';
 import ForbiddenPage from '../pages/errors/ForbiddenPage';
 import NotFoundPage from '../pages/errors/NotFoundPage';
 import HomePage from '../pages/home/HomePage';
+import PrivacyPolicyPage from '../pages/privacy/PrivacyPolicy';
 import ProductDetailPage from '../pages/products/ProductDetailPage';
 import ProductListPage from '../pages/products/ProductListPage';
 import AdminRoute from './AdminRoute';
@@ -33,6 +34,7 @@ export default function AppRoutes() {
       <Route path={ROUTES.products} element={<ProductListPage />} />
       <Route path={`${ROUTES.products}/:productId`} element={<ProductDetailPage />} />
       <Route path={ROUTES.cart} element={<CartPage />} />
+      <Route path={ROUTES.privacyPolicy} element={<PrivacyPolicyPage />} />
       <Route element={<ProtectedRoute />}>
         <Route path={ROUTES.checkout} element={<CheckoutPage />} /><Route path={`${ROUTES.checkout}/success`} element={<CheckoutSuccessPage />} />
         <Route path={ROUTES.account} element={<AccountPage />} /><Route path={ROUTES.orders} element={<OrdersPage />} /><Route path={`${ROUTES.orders}/:orderId`} element={<OrderDetailPage />} /><Route path={ROUTES.wishlist} element={<WishlistPage />} />
