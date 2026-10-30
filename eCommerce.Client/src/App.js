@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import AiChatWidget from './components/ai/AiChatWidget';
 import AppFooter from './components/AppFooter';
 import AppHeader from './components/AppHeader';
 import BackToTopButton from './components/common/BackToTopButton';
@@ -41,6 +42,7 @@ export default function App() {
               <AppFooter />
               {isCookieNoticeVisible && <CookieBanner onAccept={dismissCookieNotice} />}
               <BackToTopButton />
+              <AiChatWidget />
             </div>
           </WishlistContainer>
         </CartContainer>

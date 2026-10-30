@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useAiSearch from '../hooks/useAiSearch';
 import useProductSearch from '../hooks/useProductSearch';
 import useRecentSearches from '../hooks/useRecentSearches';
 import { ROUTES } from '../routes/routePaths';
@@ -8,18 +9,22 @@ export default function SearchModal({ open, onClose }) {
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const [term, setTerm] = useState('');
+  const [aiMode, setAiMode] = useState(false);
   const { loading, error, search, clear } = useProductSearch();
+  const aiSearch = useAiSearch();
+  const { clear: clearAiSearch } = aiSearch;
   const { recentSearches, addRecentSearch, clearRecentSearches } = useRecentSearches();
 
   useEffect(() => {
     if (open) {
       setTerm('');
       clear();
+      clearAiSearch();
       const focusTimer = setTimeout(() => inputRef.current?.focus(), 10);
       return () => clearTimeout(focusTimer);
     }
     return undefined;
-  }, [open, clear]);
+  }, [open, clear, clearAiSearch]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -39,6 +44,10 @@ export default function SearchModal({ open, onClose }) {
     event.preventDefault();
     const productId = term.trim();
     if (!productId) return;
+    if (aiMode) {
+      await aiSearch.search(productId);
+      return;
+    }
     const product = await search(productId);
     if (product) {
       addRecentSearch(product);
@@ -66,18 +75,45 @@ export default function SearchModal({ open, onClose }) {
             className="search-modal__input"
             value={term}
             onChange={(event) => setTerm(event.target.value)}
-            placeholder="search it up"
-            aria-label="Product ID"
+            placeholder={aiMode ? 'Describe what you are looking for' : 'search it up'}
+            aria-label={aiMode ? 'Describe the product' : 'Product ID'}
           />
           <button type="button" className="search-modal__close" onClick={onClose} aria-label="Close search">
             Esc
           </button>
         </form>
 
-        {loading && <p className="search-modal__status">Searching…</p>}
-        {error && !loading &&  <p className="search-modal__status search-modal__status--muted">No product found</p>}
+        <div className="search-modal__section">
+          <button type="button" className="search-modal__mode" aria-pressed={aiMode} onClick={() => { setAiMode((current) => !current); aiSearch.clear(); }}>
+            AI search: {aiMode ? 'on' : 'off'}
+          </button>
+        </div>
 
-        {!loading && recentSearches.length > 0 && (
+        {aiMode && aiSearch.loading && <p className="search-modal__status">Searching with AI…</p>}
+        {aiMode && aiSearch.error && <p className="search-modal__status search-modal__status--muted">{aiSearch.error}</p>}
+        {aiMode && aiSearch.searched && !aiSearch.loading && !aiSearch.error && aiSearch.products.length === 0 && (
+          <p className="search-modal__status search-modal__status--muted">No matching products found.</p>
+        )}
+        {aiMode && aiSearch.note && <p className="search-modal__status search-modal__status--muted">{aiSearch.note}</p>}
+        {aiMode && aiSearch.products.length > 0 && (
+          <ul className="search-modal__list">
+            {aiSearch.products.map((item) => (
+              <li key={item.id}>
+                <button type="button" className="search-modal__item" onClick={() => goToProduct(item.id)}>
+                  {item.imageUrl
+                    ? <img src={item.imageUrl} alt="" className="search-modal__item-image" />
+                    : <span className="search-modal__item-placeholder" aria-hidden="true">{item.name.charAt(0)}</span>}
+                  <span className="search-modal__item-name">{item.name}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {!aiMode && loading && <p className="search-modal__status">Searching…</p>}
+        {!aiMode && error && !loading &&  <p className="search-modal__status search-modal__status--muted">No product found</p>}
+
+        {!aiMode && !loading && recentSearches.length > 0 && (
           <div className="search-modal__section">
             <div className="search-modal__section-head">
               <span>Recent searches</span>

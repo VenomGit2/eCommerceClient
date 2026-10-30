@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import AiReviewSummary from '../../components/ai/AiReviewSummary';
 import Button from '../../components/common/Button';
 import RatingBadge from '../../components/common/RatingBadge';
 import ShareButton from '../../components/common/ShareButton';
@@ -101,6 +102,7 @@ export default function ProductDetailPage() {
       <div className="product-detail__scroll">
         {/* <ProductHighlights text={product.description} /> */}
         <ProductDescription text={product.description} />
+        {product.reviewCount > 0 && <AiReviewSummary key={product.reviewCount} productId={product.id} />}
         <ProductReviews product={product} isAdmin={isAdmin} onReviewsChanged={reload} />
       </div>
     </article>

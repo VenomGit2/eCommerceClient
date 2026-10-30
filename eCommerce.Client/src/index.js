@@ -6,6 +6,7 @@ import ErrorBoundary from './components/common/ErrorBoundary';
 import ErrorFallback from './components/common/ErrorFallback';
 import './style/global.css';
 import './style/storefront.css';
+import './style/ai.css';
 
 const emailOrderId = new URLSearchParams(window.location.search).get('openOrder');
 if (emailOrderId && /^[0-9a-f-]{36}$/i.test(emailOrderId)) {

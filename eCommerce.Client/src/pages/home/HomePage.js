@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import AiRecommendations from '../../components/ai/AiRecommendations';
 import ProductCard from '../../components/ProductCard';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import useCart from '../../hooks/useCart';
@@ -82,6 +83,9 @@ export default function HomePage() {
             ? <ErrorMessage message={error.message} onRetry={reload} />
             : <div className="product-grid comet-product-grid">{products.slice(0, 8).map((product) => <ProductCard key={product.id} product={product} onAdd={addItem} isInCart={cartItems.some((item) => String(item.id) === String(product.id))} />)}</div>}
       </section>
+
+      <AiRecommendations onAdd={addItem} cartProductIds={new Set(cartItems.map((item) => String(item.id)))} />
+
     </div>
   );
 }

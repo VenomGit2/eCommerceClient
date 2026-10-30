@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import AiCompareBar, { MAX_COMPARE_PRODUCTS } from '../../components/ai/AiCompareBar';
 import ProductCard from '../../components/ProductCard';
 import EmptyState from '../../components/common/EmptyState';
 import ErrorMessage from '../../components/common/ErrorMessage';
@@ -11,6 +12,7 @@ import { PRODUCT_CATEGORIES, formatCategoryLabel } from '../../utils/productCate
 
 export default function ProductListPage() {
   const { addItem, items: cartItems } = useCart();
+  const [compareIds, setCompareIds] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedCategory = searchParams.get('category') || '';
 
@@ -39,6 +41,17 @@ export default function ProductListPage() {
     [cartItems],
   );
 
+  const selectedForCompare = useMemo(
+    () => compareIds.map((id) => products.find((product) => product.id === id)).filter(Boolean),
+    [compareIds, products],
+  );
+
+  const toggleCompare = (productId) => {
+    setCompareIds((current) => (current.includes(productId)
+      ? current.filter((id) => id !== productId)
+      : [...current, productId].slice(0, MAX_COMPARE_PRODUCTS)));
+  };
+
   const selectCategory = (event) => {
     const category = event.target.value;
     setSearchParams(category ? { category } : {});
@@ -62,12 +75,22 @@ export default function ProductListPage() {
       <>
         <div className="product-grid">
           {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAdd={addItem}
-              isInCart={cartProductIds.has(String(product.id))}
-            />
+            <div key={product.id} className="compare-slot">
+              <ProductCard
+                product={product}
+                onAdd={addItem}
+                isInCart={cartProductIds.has(String(product.id))}
+              />
+              <label className="compare-slot__toggle">
+                <input
+                  type="checkbox"
+                  checked={compareIds.includes(product.id)}
+                  disabled={!compareIds.includes(product.id) && compareIds.length >= MAX_COMPARE_PRODUCTS}
+                  onChange={() => toggleCompare(product.id)}
+                />
+                Compare
+              </label>
+            </div>
           ))}
         </div>
         {error && <ErrorMessage message={error.message} onRetry={loadMore} />}
@@ -111,6 +134,7 @@ export default function ProductListPage() {
       </div>
 
       {results}
+      <AiCompareBar selected={selectedForCompare} onClear={() => setCompareIds([])} />
     </section>
   );
 }
