@@ -4,6 +4,7 @@ import ProductFormFields from './ProductFormFields';
 import Button from '../../components/common/Button';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import { createProduct } from '../../services/productService';
+import { generateProductDescription } from '../../services/aiService';
 import useAxios from '../../hooks/useAxios';
 
 const initialProduct = { productName: '', category: 'Other', unitPrice: '', quantityInStock: '', description: '' };
@@ -16,6 +17,7 @@ export default function AddProductPage() {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [state, setState] = useState({ submitting: false, error: '', success: '' });
+  const [generating, setGenerating] = useState(false);
   const imageInputRef = useRef(null);
 
   useEffect(() => () => {
@@ -52,8 +54,28 @@ export default function AddProductPage() {
     setImagePreview(URL.createObjectURL(selectedImage));
   };
 
+  const generateDescription = async () => {
+    const productName = product.productName.trim();
+    const category = product.category;
+    const previousDescription = product.description;
+    if (!productName || generating || state.submitting) return;
+    setGenerating(true);
+    setState((current) => ({ ...current, error: '', success: '' }));
+    try {
+      const description = await generateProductDescription(API, { productName, category });
+      setProduct((current) => (current.productName.trim() === productName && current.category === category && current.description === previousDescription
+        ? { ...current, description }
+        : current));
+    } catch (error) {
+      setState((current) => ({ ...current, error: error.message || 'Could not generate a description.' }));
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   const submit = async (event) => {
     event.preventDefault();
+    if (generating || state.submitting) return;
     if (!image) {
       setState({ submitting: false, error: 'Choose a product image before adding the product.', success: '' });
       imageInputRef.current?.focus();
@@ -62,9 +84,14 @@ export default function AddProductPage() {
 
     setState({ submitting: true, error: '', success: '' });
     try {
+      const description = product.description.trim() || await generateProductDescription(API, {
+        productName: product.productName.trim(),
+        category: product.category,
+      });
+      setProduct((current) => ({ ...current, description }));
       await createProduct(
         API,
-        { ...product, unitPrice: Number(product.unitPrice), quantityInStock: Number(product.quantityInStock) },
+        { ...product, description, unitPrice: Number(product.unitPrice), quantityInStock: Number(product.quantityInStock) },
         image,
       );
       setProduct(initialProduct);
@@ -73,7 +100,7 @@ export default function AddProductPage() {
       if (imageInputRef.current) imageInputRef.current.value = '';
       setState({ submitting: false, error: '', success: 'Product added successfully.' });
     } catch (error) {
-      setState({ submitting: false, error: error.message, success: '' });
+      setState({ submitting: false, error: error.message || 'Could not add the product.', success: '' });
     }
   };
 
@@ -84,7 +111,16 @@ export default function AddProductPage() {
       {state.error && <ErrorMessage message={state.error} />}
       {state.success && <p className="notice notice--success" role="status">{state.success}</p>}
       <form className="admin-product-form" onSubmit={submit}>
-        <ProductFormFields product={product} setProduct={setProduct} />
+        <ProductFormFields
+          product={product}
+          setProduct={setProduct}
+          fieldsDisabled={state.submitting}
+          descriptionAction={(
+            <Button type="button" variant="ghost" onClick={generateDescription} disabled={!product.productName.trim() || generating || state.submitting}>
+              {generating ? 'Generating description…' : 'Generate description with AI'}
+            </Button>
+          )}
+        />
         <div className="field product-image-field">
           <label htmlFor="product-image">Product image</label>
           <div className="product-image-field__control">
@@ -92,13 +128,13 @@ export default function AddProductPage() {
               ? <img className="product-image-field__preview" src={imagePreview} alt="Selected product preview" />
               : <div className="product-image-field__placeholder" aria-hidden="true"><span>+</span><small>Image preview</small></div>}
             <div>
-              <input ref={imageInputRef} id="product-image" type="file" accept="image/jpeg,image/png,image/webp" required onChange={selectImage} />
+              <input ref={imageInputRef} id="product-image" type="file" accept="image/jpeg,image/png,image/webp" required onChange={selectImage} disabled={state.submitting} />
               <p className="product-image-field__help">JPEG, PNG, or WebP. Maximum 5 MB.</p>
               {image && <p className="product-image-field__name">{image.name}</p>}
             </div>
           </div>
         </div>
-        <Button type="submit" disabled={state.submitting}>{state.submitting ? 'Adding product…' : 'Add product'}</Button>
+        <Button type="submit" disabled={state.submitting || generating}>{state.submitting ? 'Adding product…' : 'Add product'}</Button>
       </form>
     </section>
   );

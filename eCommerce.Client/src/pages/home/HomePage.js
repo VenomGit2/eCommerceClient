@@ -1,17 +1,37 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import AiRecommendations from '../../components/ai/AiRecommendations';
 import ProductCard from '../../components/ProductCard';
 import ErrorMessage from '../../components/common/ErrorMessage';
+import useAsync from '../../hooks/useAsync';
+import useAuth from '../../hooks/useAuth';
+import useAxios from '../../hooks/useAxios';
 import useCart from '../../hooks/useCart';
 import usePageMeta from '../../hooks/usePageMeta';
 import useProducts from '../../hooks/useProducts';
 import { ROUTES } from '../../routes/routePaths';
+import { getAiRecommendations } from '../../services/aiService';
 import { formatCurrency } from '../../utils/currency';
 
 export default function HomePage() {
   const { products, loading, error, reload } = useProducts();
   const { addItem, items: cartItems } = useCart();
+  const API = useAxios();
+  const { isAuthenticated } = useAuth();
+  const { data: recommendations, loading: recommendationsLoading } = useAsync(
+    (signal) => getAiRecommendations(API, signal),
+    [API, isAuthenticated],
+  );
+  const seenProductIds = new Set();
+  const displayedProducts = [
+    ...(!recommendationsLoading ? recommendations?.items.map(({ product }) => product) ?? [] : []),
+    ...products.slice(0, 8),
+  ].filter((product) => {
+    if (!product || product.id == null) return false;
+    const id = String(product.id);
+    if (seenProductIds.has(id)) return false;
+    seenProductIds.add(id);
+    return true;
+  });
   const heroProduct = products[0];
   const sceneRef = useRef(null);
 
@@ -74,17 +94,15 @@ export default function HomePage() {
 
       <section className="comet-products" aria-labelledby="new-launches-title">
         <div className="comet-section-title">
-          <h2 id="new-launches-title">NEW LAUNCHES</h2>
+          <h2 id="new-launches-title">DISCOVER PRODUCTS</h2>
           <Link to={ROUTES.products}>VIEW ALL <span aria-hidden="true">→</span></Link>
         </div>
         {loading
           ? null
           : error
             ? <ErrorMessage message={error.message} onRetry={reload} />
-            : <div className="product-grid comet-product-grid">{products.slice(0, 8).map((product) => <ProductCard key={product.id} product={product} onAdd={addItem} isInCart={cartItems.some((item) => String(item.id) === String(product.id))} />)}</div>}
+            : <div className="product-grid comet-product-grid">{displayedProducts.map((product) => <ProductCard key={product.id} product={product} onAdd={addItem} isInCart={cartItems.some((item) => String(item.id) === String(product.id))} />)}</div>}
       </section>
-
-      <AiRecommendations onAdd={addItem} cartProductIds={new Set(cartItems.map((item) => String(item.id)))} />
 
     </div>
   );

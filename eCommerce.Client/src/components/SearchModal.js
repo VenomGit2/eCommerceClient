@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAiSearch from '../hooks/useAiSearch';
-import useProductSearch from '../hooks/useProductSearch';
 import useRecentSearches from '../hooks/useRecentSearches';
 import { ROUTES } from '../routes/routePaths';
 
@@ -9,8 +8,6 @@ export default function SearchModal({ open, onClose }) {
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const [term, setTerm] = useState('');
-  const [aiMode, setAiMode] = useState(false);
-  const { loading, error, search, clear } = useProductSearch();
   const aiSearch = useAiSearch();
   const { clear: clearAiSearch } = aiSearch;
   const { recentSearches, addRecentSearch, clearRecentSearches } = useRecentSearches();
@@ -18,13 +15,12 @@ export default function SearchModal({ open, onClose }) {
   useEffect(() => {
     if (open) {
       setTerm('');
-      clear();
       clearAiSearch();
       const focusTimer = setTimeout(() => inputRef.current?.focus(), 10);
       return () => clearTimeout(focusTimer);
     }
     return undefined;
-  }, [open, clear, clearAiSearch]);
+  }, [open, clearAiSearch]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -35,24 +31,17 @@ export default function SearchModal({ open, onClose }) {
 
   if (!open) return null;
 
-  const goToProduct = (productId) => {
+  const goToProduct = (product) => {
+    addRecentSearch(product);
     onClose();
-    navigate(`${ROUTES.products}/${encodeURIComponent(productId)}`);
+    navigate(`${ROUTES.products}/${encodeURIComponent(product.id)}`);
   };
 
   const submitSearch = async (event) => {
     event.preventDefault();
-    const productId = term.trim();
-    if (!productId) return;
-    if (aiMode) {
-      await aiSearch.search(productId);
-      return;
-    }
-    const product = await search(productId);
-    if (product) {
-      addRecentSearch(product);
-      goToProduct(product.id);
-    }
+    const query = term.trim();
+    if (!query) return;
+    await aiSearch.search(query);
   };
 
   return (
@@ -74,32 +63,33 @@ export default function SearchModal({ open, onClose }) {
             type="search"
             className="search-modal__input"
             value={term}
-            onChange={(event) => setTerm(event.target.value)}
-            placeholder={aiMode ? 'Describe what you are looking for' : 'search it up'}
-            aria-label={aiMode ? 'Describe the product' : 'Product ID'}
+            onChange={(event) => {
+              setTerm(event.target.value);
+              if (!event.target.value.trim()) aiSearch.clear();
+            }}
+            placeholder="Search products, brands, or describe what you need"
+            aria-label="Search products"
           />
+          <button type="submit" className="search-modal__submit" disabled={!term.trim() || aiSearch.loading} aria-label="Search with AI">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3 .8 3.2A6.7 6.7 0 0 0 17.8 11l3.2 1-3.2 1a6.7 6.7 0 0 0-5 4.8L12 21l-.8-3.2A6.7 6.7 0 0 0 6.2 13L3 12l3.2-1a6.7 6.7 0 0 0 5-4.8L12 3Z" /></svg>
+            <span>{aiSearch.loading ? 'Searching' : 'Search'}</span>
+          </button>
           <button type="button" className="search-modal__close" onClick={onClose} aria-label="Close search">
             Esc
           </button>
         </form>
 
-        <div className="search-modal__section">
-          <button type="button" className="search-modal__mode" aria-pressed={aiMode} onClick={() => { setAiMode((current) => !current); aiSearch.clear(); }}>
-            AI search: {aiMode ? 'on' : 'off'}
-          </button>
-        </div>
-
-        {aiMode && aiSearch.loading && <p className="search-modal__status">Searching with AI…</p>}
-        {aiMode && aiSearch.error && <p className="search-modal__status search-modal__status--muted">{aiSearch.error}</p>}
-        {aiMode && aiSearch.searched && !aiSearch.loading && !aiSearch.error && aiSearch.products.length === 0 && (
+        {aiSearch.loading && <p className="search-modal__status">Finding the best matches…</p>}
+        {aiSearch.error && <p className="search-modal__status search-modal__status--muted">{aiSearch.error}</p>}
+        {aiSearch.searched && !aiSearch.loading && !aiSearch.error && aiSearch.products.length === 0 && (
           <p className="search-modal__status search-modal__status--muted">No matching products found.</p>
         )}
-        {aiMode && aiSearch.note && <p className="search-modal__status search-modal__status--muted">{aiSearch.note}</p>}
-        {aiMode && aiSearch.products.length > 0 && (
+        {aiSearch.note && <p className="search-modal__status search-modal__status--muted">{aiSearch.note}</p>}
+        {aiSearch.products.length > 0 && (
           <ul className="search-modal__list">
             {aiSearch.products.map((item) => (
               <li key={item.id}>
-                <button type="button" className="search-modal__item" onClick={() => goToProduct(item.id)}>
+                <button type="button" className="search-modal__item" onClick={() => goToProduct(item)}>
                   {item.imageUrl
                     ? <img src={item.imageUrl} alt="" className="search-modal__item-image" />
                     : <span className="search-modal__item-placeholder" aria-hidden="true">{item.name.charAt(0)}</span>}
@@ -110,10 +100,7 @@ export default function SearchModal({ open, onClose }) {
           </ul>
         )}
 
-        {!aiMode && loading && <p className="search-modal__status">Searching…</p>}
-        {!aiMode && error && !loading &&  <p className="search-modal__status search-modal__status--muted">No product found</p>}
-
-        {!aiMode && !loading && recentSearches.length > 0 && (
+        {!aiSearch.searched && !aiSearch.loading && recentSearches.length > 0 && (
           <div className="search-modal__section">
             <div className="search-modal__section-head">
               <span>Recent searches</span>
@@ -122,7 +109,7 @@ export default function SearchModal({ open, onClose }) {
             <ul className="search-modal__list">
               {recentSearches.map((item) => (
                 <li key={item.id}>
-                  <button type="button" className="search-modal__item" onClick={() => goToProduct(item.id)}>
+                  <button type="button" className="search-modal__item" onClick={() => goToProduct(item)}>
                     {item.imageUrl
                       ? <img src={item.imageUrl} alt="" className="search-modal__item-image" />
                       : <span className="search-modal__item-placeholder" aria-hidden="true">{item.name.charAt(0)}</span>}
@@ -133,12 +120,6 @@ export default function SearchModal({ open, onClose }) {
             </ul>
           </div>
         )}
-
-        {/* {!loading && recentSearches.length === 0 && !error && (
-          <p className="search-modal__status search-modal__status--muted">
-            Type a product ID and press Enter to jump straight to it.
-          </p>
-        )} */}
       </div>
     </div>
   );

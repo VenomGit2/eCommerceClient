@@ -1,4 +1,4 @@
-import { aiSearchProducts, getAiRecommendations, sendAiChatMessage } from './aiService';
+import { aiSearchProducts, generateProductDescription, getAiRecommendations, sendAiChatMessage } from './aiService';
 
 describe('aiService', () => {
   const originalEnv = process.env;
@@ -43,5 +43,18 @@ describe('aiService', () => {
 
     expect(result.personalized).toBe(true);
     expect(result.items[0]).toMatchObject({ reason: 'Popular', product: { id: 'p1' } });
+  });
+
+  it('requests an editable product description from the authenticated AI endpoint', async () => {
+    const API = { post: jest.fn().mockResolvedValue({ data: { data: { description: 'A compact desk lamp.' } } }) };
+
+    const description = await generateProductDescription(API, { productName: 'Desk lamp', category: 'Furniture' });
+
+    expect(API.post).toHaveBeenCalledWith(
+      'api/ai/products/description',
+      { productName: 'Desk lamp', category: 'Furniture' },
+      { signal: undefined, hideLoader: true },
+    );
+    expect(description).toBe('A compact desk lamp.');
   });
 });

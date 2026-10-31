@@ -6,14 +6,16 @@ import useCart from '../../hooks/useCart';
 import { ROUTES } from '../../routes/routePaths';
 import { formatCurrency } from '../../utils/currency';
 import emptyCartImage from '../../assets/empty-cart.svg';
+import AiCartRecovery from '../../components/ai/AiCartRecovery';
 
 export default function CartPage() {
-  const { items, total, setQuantity, removeItem } = useCart();
+  const { items, total, recovery, dismissRecovery, setQuantity, removeItem } = useCart();
   if (!items.length) return <EmptyState title="Your cart is empty" message="Add a product to begin." action={<><img className="empty-state__image" src={emptyCartImage} alt="" /><Link className="button button--primary" to={ROUTES.products}>Browse products</Link></>} />;
 
   return (
     <section>
       <h1>Your cart</h1>
+      {recovery && <AiCartRecovery items={items} onDismiss={dismissRecovery} />}
       <ul className="cart-list">
         {items.map((item) => {
           const productPath = `${ROUTES.products}/${encodeURIComponent(item.id)}`;

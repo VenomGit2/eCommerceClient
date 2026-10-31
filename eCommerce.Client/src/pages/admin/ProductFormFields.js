@@ -1,7 +1,7 @@
 import Input from '../../components/common/Input';
 import { PRODUCT_CATEGORIES, formatCategoryLabel } from '../../utils/productCategories';
 
-export default function ProductFormFields({ product, setProduct, includeProductId = false, fieldsDisabled = false }) {
+export default function ProductFormFields({ product, setProduct, includeProductId = false, fieldsDisabled = false, descriptionAction = null }) {
   const updateField = (field) => (event) => setProduct((current) => ({ ...current, [field]: event.target.value }));
 
   return (
@@ -26,7 +26,11 @@ export default function ProductFormFields({ product, setProduct, includeProductI
           onChange={updateField('description')}
           disabled={fieldsDisabled}
         />
-        <p className="field__help">Use blank lines for new paragraphs and "- " at the start of a line for bullet points. This will be formatted automatically on the product page.</p>
+        <p className="field__help">
+          {descriptionAction && 'Optional. Leave blank to generate a description when you add the product. '}
+          Use blank lines for new paragraphs and "- " at the start of a line for bullet points. This will be formatted automatically on the product page.
+        </p>
+        {descriptionAction}
       </div>
     </>
   );
